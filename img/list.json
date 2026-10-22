@@ -1,0 +1,14 @@
+{
+  "files": [
+    { "name": "games", "url": "img/games.zip", "desc": "BK-0010 games and programs (.bin)" }
+  ],
+  "disks": [
+    { "name": "disks", "url": "img/disks.zip", "desc": "ANDOS, DX-DOS, AltPro, RT-11 floppies, HDD" }
+  ],
+  "scripts": [
+    { "name": "bkscript", "url": "img/bkscript.zip", "desc": "keyboard scripts" }
+  ],
+  "states": [
+  { "name": "snapshots", "url": "img/snaps.zip", "desc": "snapshots" }
+  ]
+}
