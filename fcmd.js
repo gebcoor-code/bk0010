@@ -383,6 +383,17 @@
 
     // ---- own small dialogs inside the window: ask({ title, text, ok }) → Promise<boolean>
     let dlgDone = null;
+    // the dialog lives on the page (not in this window): its box is centred on the BK window, inside the screen
+    const dlg = $('fcdlg'); document.body.appendChild(dlg);
+    function placeDlg() {
+      if (dlg.hidden) return;
+      const box = dlg.querySelector('.box'), sw = $('screenwin'), vw = document.documentElement.clientWidth, vh = window.innerHeight;
+      const r = sw ? sw.getBoundingClientRect() : { left: 0, top: 0, width: vw, height: vh };
+      const bw = box.offsetWidth, bh = box.offsetHeight;
+      box.style.left = Math.max(8, Math.min(r.left + (r.width - bw) / 2, vw - bw - 8)) + 'px';
+      box.style.top = Math.max(8, Math.min(r.top + (r.height - bh) / 2, vh - bh - 8)) + 'px';
+    }
+    window.addEventListener('resize', placeDlg);
     // o.buttons: several answers (the index is returned, -1 = Esc); else OK / Cancel (true / false)
     function ask(o) {
       const d = $('fcdlg');
@@ -396,7 +407,7 @@
         e.onclick = () => dlgDone && dlgDone(o.buttons ? i : i === 0);
         bar.appendChild(e);
       });
-      d.hidden = false; bar.querySelector('button').focus();
+      d.hidden = false; placeDlg(); bar.querySelector('button').focus();
       return new Promise((res) => { dlgDone = (v) => { d.hidden = true; dlgDone = null; P[act].el.querySelector('.fclist').focus();
         res(o.buttons ? (v === true ? 0 : v === false ? -1 : v) : v); }; });
     }
@@ -580,7 +591,7 @@
     function current() { const p = P[act]; const it = p.items[p.cur]; return p.vol && it && !it.dir ? { vol: p.vol, file: it.id } : null; }
     return {
       show, get open() { return !win.hidden; }, hasFocus: () => win.contains(document.activeElement) || viewer.hasFocus(),
-      current, ask, addSet: (set, other) => addSet(set, other ? 1 - act : act), refresh: () => { if (!win.hidden) { fillSrc(); load(0); load(1); } },
+      current, ask, dialogOpen: () => !!dlgDone, addSet: (set, other) => addSet(set, other ? 1 - act : act), refresh: () => { if (!win.hidden) { fillSrc(); load(0); load(1); } },
       select,
     };
   }

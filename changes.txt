@@ -222,3 +222,7 @@
         version 0.19.3                  13 oct 2026
 
 @ About: Screen and Keyboard rows reworded
+
+        version 0.19.4                  22 oct 2026
+
+@ questions (disk image, tape, copy, delete ...): centred on BK window, page dimmed

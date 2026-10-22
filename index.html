@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="build" content="20261013102311">
+<meta name="build" content="20261022140203">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" href="icon.png">
@@ -273,14 +273,15 @@ button.ico.wide { width: auto; padding: 0 7px; gap: 4px; font-size: 12px; font-w
 .gfxedge { position: absolute; top: 0; right: 2px; width: 6px; height: 100%; cursor: ew-resize; background: rgba(240,160,80,.45); }
 .vscroll { writing-mode: vertical-lr; direction: ltr; width: 16px; margin: 0; accent-color: var(--accent); }
 .gfxstat { padding: 2px 10px 3px; font-size: 11px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-top: 1px solid var(--line); }
-#fcdlg { position: absolute; inset: 0; background: rgba(5,7,10,.55); display: flex; align-items: center; justify-content: center; z-index: 3; }
+/* questions (File Commander, disks, tapes): over the whole page, the box centred on the BK window */
+#fcdlg { position: fixed; inset: 0; background: rgba(5,7,10,.45); z-index: 60; }
 #fcdlg[hidden] { display: none; }
-#fcdlg .box { width: min(340px, 90%); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 10px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+#fcdlg .box { position: absolute; width: min(340px, calc(100vw - 16px)); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 10px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
 #fcdlg .t { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
 #fcdlg .x { font-size: 12px; color: var(--dim); white-space: pre-line; margin-bottom: 12px; line-height: 1.4; }
 #fcdlg .b { display: flex; justify-content: flex-end; gap: 6px; flex-wrap: wrap; }
 #fcdlg button { padding: 4px 14px; font-size: 12px; }
-#fcdlg .box.wide { width: min(460px, 94%); max-height: calc(100% - 12px); overflow: auto; box-sizing: border-box; }
+#fcdlg .box.wide { width: min(460px, calc(100vw - 16px)); max-height: calc(100% - 16px); overflow: auto; box-sizing: border-box; }
 .fchdd { margin-top: 6px; color: var(--text); }
 .fchdd .l { max-height: 150px; overflow: auto; border: 1px solid var(--line); border-radius: 5px; padding: 4px 6px; margin-bottom: 6px; }
 .fchdd label { display: block; line-height: 1.5; }
@@ -883,13 +884,13 @@ select.usel-src { display: none !important; }
   <pre id="fvbody" tabindex="0"></pre>
 </div>
 
-<script src="usel.js?v=20261013102311"></script>
-<script src="wasi_fs.js?v=20261013102311"></script>
-<script src="unzip.js?v=20261013102311"></script>
-<script src="fcmd.js?v=20261013102311"></script>
-<script src="diskfs.js?v=20261013102311"></script>
-<script src="dbg.js?v=20261013102311"></script>
-<script src="vkbd.js?v=20261013102311"></script>
-<script src="app.js?v=20261013102311"></script>
+<script src="usel.js?v=20261022140203"></script>
+<script src="wasi_fs.js?v=20261022140203"></script>
+<script src="unzip.js?v=20261022140203"></script>
+<script src="fcmd.js?v=20261022140203"></script>
+<script src="diskfs.js?v=20261022140203"></script>
+<script src="dbg.js?v=20261022140203"></script>
+<script src="vkbd.js?v=20261022140203"></script>
+<script src="app.js?v=20261022140203"></script>
 </body>
 </html>
