@@ -3,11 +3,11 @@
   'use strict';
   const { MemFS, WASI } = window.UnrealWasi; // wasi_fs.js (shared with the Unreal Speccy web port)
 
-  const WASM_URL = 'bk.wasm?v=20261023163756';
-  const APP_VER = '0.25.1'; // About (history: changes.txt)
+  const WASM_URL = 'bk.wasm?v=20261023181402';
+  const APP_VER = '0.30.5'; // About (history: changes.txt)
   // the author's e-mail in About, as a picture (not text for address collectors): 12px, the About line's colour, 3x
   const IMG_MAIL = 'data:image/png;base64,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';
-  const BUILD = '20261023163756'; // set by make_dist.sh: the build of these files (index.html carries the same in <meta name="build">)
+  const BUILD = '20261023181402'; // set by make_dist.sh: the build of these files (index.html carries the same in <meta name="build">)
   // bk.ini of the original emulator is used as is (ROM names, options); it sits next to index.html.
   const INI_FILE = 'bk.ini';
   // Folders on the server are lower case: ROM images live in rom/ (names as in bk.ini, lower case).
@@ -131,12 +131,15 @@
   // Server sets: ZIP files of BK tape files; the first one is opened in File Commander. Folders on the server are lower case.
   // The server list: img/list.json — { "files": [...], "disks": [...], "scripts": [...], "states": [...] }, items
   // { "name", "url", "desc" }: a .zip is a set for File Commander, other files are opened as they are (image, .msf, ...)
-  const LIST_GROUPS = [['files', 'Files'], ['disks', 'Disks'], ['scripts', 'Scripts'], ['states', 'States']];
+  const LIST_TITLES = { files: 'Files', disks: 'Disks', scripts: 'Scripts', asm: 'Assembler', states: 'States' };
+  // groups of img/list.json: the known ones in their order, then any other array the list has (title from its key)
+  const listGroups = () => Object.keys(LIST_TITLES).concat(Object.keys(serverList).filter((k) => !(k in LIST_TITLES) && Array.isArray(serverList[k])))
+    .map((g) => [g, LIST_TITLES[g] || g.charAt(0).toUpperCase() + g.slice(1)]);
   let serverList = { files: [{ name: 'games', url: 'img/games.zip' }], disks: [{ name: 'disks', url: 'img/disks.zip' }], scripts: [{ name: 'bkscript', url: 'img/bkscript.zip' }] };
   const SETS = [];
   function setsFromList() {
     const old = new Map(SETS.map((x) => [x.url, x])); SETS.length = 0;
-    for (const [g] of LIST_GROUPS) for (const it of serverList[g] || []) if (/\.zip$/i.test(it.url)) SETS.push(old.get(it.url) || { id: 'S' + SETS.length + '_' + it.url.length, name: it.name, url: it.url });
+    for (const [g] of listGroups()) for (const it of serverList[g] || []) if (/\.zip$/i.test(it.url)) SETS.push(old.get(it.url) || { id: 'S' + SETS.length + '_' + it.url.length, name: it.name, url: it.url });
   }
   setsFromList();
   async function loadServerList() {
@@ -343,12 +346,12 @@
   // FAT12 / ANDOS disks without a system file (*.SYS) and RT-11 disks are not booted: their files are opened.
   function diskProfile(name, data) {
     if (/\.HDI$/i.test(name)) return { hdd: true, kind: 'HDD', boot: hasHdd(model) ? model : 'BK0011M_SMK' };
-    const v = window.BKDisk.open(name, data), kind = v ? v.kind : '';
-    const sys = v && v.files.some((f) => /\.SYS$/i.test(f.path));
+    // the system of the image and whether it boots: as BK Emulator 4.6 (BKParseImage: NOP and no RESET at the start of block 0)
+    const v = window.BKDisk.open(name, data), pr = window.BKDisk.parse(data), kind = pr.os || (v ? v.kind : '');
     let boot = hasFdd(model) ? model : 'BK0010_01_FDD';
-    if (kind === 'FAT12') boot = ['BK0010_01_FDD', 'BK0011M_FDD'].includes(model) ? model : 'BK0010_01_FDD';
-    if (kind === 'RT-11' || ((kind === 'FAT12' || kind === 'ANDOS') && !sys)) boot = null;
-    return { hdd: false, kind, vol: v, boot };
+    if (kind === 'DX-DOS' || kind === 'MS-DOS' || (v && v.kind === 'FAT12')) boot = ['BK0010_01_FDD', 'BK0011M_FDD'].includes(model) ? model : 'BK0010_01_FDD';
+    if (!pr.boot || kind === 'OPTOK' || kind === 'RT-11') boot = null; // OPTOK: its own controller, not emulated here; RT-11 disks do not start here
+    return { hdd: false, kind, vol: v, boot, note: kind === 'OPTOK' ? 'OPTOK disk: needs OPTOK controller (not emulated).' : '' };
   }
   // the model for drive i: the current one when it has the controller, otherwise one of its family is asked
   async function modelFor(hdd, ask) {
@@ -369,7 +372,7 @@
       else return false;
     } else {
       const btn = (P.boot ? ['Boot'] : []).concat(['A:', 'B:', 'C:', 'D:', 'Cancel']);
-      const text = (P.boot ? `Boot: ${MODELS[P.boot].name} restarts from it (drive A:).` : 'Not a system disk.') + '\nA: .. D: insert into drive, no restart.';
+      const text = (P.boot ? `Boot: ${MODELS[P.boot].name} restarts from it (drive A:).` : P.note || 'Not a system disk.') + '\nA: .. D: insert into drive, no restart.';
       const k = await ask({ title: name + (P.kind ? ' · ' + P.kind : ''), text, buttons: btn });
       const b = btn[k];
       if (b === 'Boot') { i = 0; target = P.boot; boot = true; }
@@ -429,6 +432,29 @@
       driveSet(i, f.name.toUpperCase(), data);
       if (need) toast(MODELS[model].name + ': no ' + (i >= 4 ? 'HDD' : 'floppy') + ' controller (Options → System)', true);
       else if (i >= 4) { await setModel(model, true); bootScript(); }
+    };
+    // new HDD image (port of HDDImgMaker / HDIStuff::CreateHDISector, BK Emulator 4.6): the IDE passport, then zero sectors
+    const geo = () => [['hddc', 1024], ['hddh', 16], ['hdds', 63]].map(([id, mx]) => Math.max(1, Math.min(mx, Math.round(+$(id).value) || 1)));
+    const hddSize = () => { const [c, h, sc] = geo(); $('hddsize').textContent = (c * h * sc * 512 / 1048576).toFixed(1) + ' MB · ' + c * h * sc + ' sectors'; };
+    for (const id of ['hddc', 'hddh', 'hdds']) $(id).addEventListener('input', hddSize);
+    hddSize();
+    const newHdi = () => {
+      const [C, H, S] = geo(), n = C * H * S, img = new Uint8Array(512 + n * 512), w = new DataView(img.buffer);
+      const words = { 0: 0x045a, 1: C, 2: 0xc837, 3: H, 4: 512 * S, 5: 512, 6: S, 20: 1, 21: 1, 22: 4, 47: 0x8001, 49: 0x200, 50: 0x4000 };
+      for (const k in words) w.setUint16(k * 2, words[k], true);
+      w.setUint32(57 * 2, n + 1, true); w.setUint32(60 * 2, n, true);
+      const str = (o, t, len) => { const b = []; for (let i = 0; i < len; i++) b.push(i < t.length ? t.charCodeAt(i) : 32); for (let i = 0; i < len; i += 2) { img[o + i] = b[i + 1]; img[o + i + 1] = b[i]; } }; // bytes swapped in words
+      let sn = 'BK-'; for (let i = 0; i < 4; i++) sn += String.fromCharCode(65 + Math.floor(Math.random() * 26)); for (let i = 0; i < 8; i++) sn += Math.floor(Math.random() * 10);
+      str(20, sn, 20); str(46, 'v1.0.0.0', 8); str(54, 'BKEMU HARD DRIVE IMAGE', 40);
+      img[510] = 0xA5; let cs = 0; for (let i = 0; i < 511; i++) cs = (cs + img[i]) & 255; img[511] = (-cs) & 255;
+      return { name: 'NEW_' + Math.round(n * 512 / 1048576) + 'MB.HDI', data: img };
+    };
+    $('hddget').onclick = () => { const h = newHdi(); downloadBytes(h.name, h.data); };
+    $('hddslave').onclick = async () => {
+      const h = newHdi(); const target = hasHdd(model) ? model : 'BK0011M_SMK';
+      if (!MODELS[target]) return;
+      await mountTo(5, h.name, h.data, target, false, null);
+      toast(h.name + ' → HDD slave of ' + MODELS[target].name);
     };
     $('fddio').onchange = () => { fddIO = $('fddio').checked; store('fddio', fddIO ? '1' : '0'); E.web_set_fdd_io(fddIO ? 1 : 0); };
   }
@@ -508,6 +534,15 @@
   }
 
   // ---- Load and Save menus (toolbar)
+  // Esc with a menu open (toolbar menus, File Commander's Files menu) closes the menu only, not the window under it
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const open = document.querySelector('.pop.menu.open');
+    if (open) { menuShow(null, false); open.classList.remove('open'); if (open.previousElementSibling) open.previousElementSibling.classList.remove('open'); }
+    else if (fc && fc.menuOpen && fc.menuOpen()) fc.closeMenu();
+    else return;
+    e.preventDefault(); e.stopPropagation();
+  }, true);
   function menuShow(id, v) {
     document.querySelectorAll('.pop.menu.open').forEach((m) => { if (m.id !== id) { m.classList.remove('open'); const b = m.previousElementSibling; if (b) b.classList.remove('open'); } });
     const m = id && $(id); if (!m) return;
@@ -522,7 +557,7 @@
     };
     const grp = (t) => { const d = document.createElement('div'); d.className = 'mgrp'; d.textContent = t; m.appendChild(d); };
     item('From computer…', 'Files from this computer: .zip, .bin, disk images, .msf, .bkscript, .tap / .wav', () => $('loadfile').click(), '', 'i-fc');
-    for (const [g, title] of LIST_GROUPS) {
+    for (const [g, title] of listGroups()) {
       const list = serverList[g] || []; if (!list.length) continue;
       grp('Server · ' + title);
       for (const it of list) item(it.name, (it.desc ? it.desc + ' · ' : '') + it.url, () => loadServerItem(it), /\.zip$/i.test(it.url) ? 'set' : '', g === 'disks' ? 'i-disk' : g === 'states' ? 'i-save' : g === 'files' || /\.zip$/i.test(it.url) ? 'i-zip' : 'i-load');
@@ -674,6 +709,10 @@
     $('adaptmode').checked = !!E.web_get_adapt();
     $('bkkbd').checked = !!E.web_get_bk_keyboard();
     try { const st = JSON.parse(load('snddev')); if (st) for (let i = 0; i <= 6; i++) if (i in st) E.web_snd_set(i, st[i] ? 1 : 0); } catch (e) {}
+    const ch = load('sndchip'); if (ch !== null) E.web_snd_set(7, ch === '1' ? 1 : 0);
+    E.web_set_jcuken(load('jcuken') === '1' ? 1 : 0); $('jcuken').checked = load('jcuken') === '1';
+    setMouse(load('mouse') === '1');
+    const co = load('cpuopts'); E.web_set_cpu_opts(co === null ? 7 : +co & 7); cpuUI();
     E.web_snd_gain(0, volLevel(0)); E.web_snd_gain(1, volLevel(1));
     E.web_set_fdd_io(fddIO ? 1 : 0);
     sndUI();
@@ -684,6 +723,7 @@
       const i = +c.dataset.snd;
       c.checked = c.hasAttribute('data-filter') ? !!(E.web_snd_get(3) && E.web_snd_get(4) && E.web_snd_get(5)) : !!E.web_snd_get(i);
     });
+    $('sndchip').value = String(E.web_snd_get(7));
     for (const [id, k] of [['volspk', 0], ['vol', 1]]) { const v = volLevel(k); $(id).value = v; $(id + 'out').textContent = v + '%'; }
   }
   function bindSound() {
@@ -723,6 +763,12 @@
     $('adaptmode').onchange = () => { E.web_set_adapt($('adaptmode').checked ? 1 : 0); store('adapt', $('adaptmode').checked ? '1' : '0'); redraw(); };
     $('numjoy').checked = numJoy;
     $('numjoy').onchange = () => { numJoy = $('numjoy').checked; store('numjoy', numJoy ? '1' : '0'); };
+    document.querySelectorAll('#options [data-cpu]').forEach((c) => { c.onchange = () => {
+      let v = 0; document.querySelectorAll('#options [data-cpu]').forEach((x) => { if (x.checked) v |= +x.dataset.cpu; });
+      E.web_set_cpu_opts(v); store('cpuopts', String(v)); }; });
+    $('jcuken').onchange = () => { E.web_set_jcuken($('jcuken').checked ? 1 : 0); store('jcuken', $('jcuken').checked ? '1' : '0'); };
+    $('mousemars').onchange = () => { setMouse($('mousemars').checked); store('mouse', mouseOn ? '1' : '0'); };
+    $('sndchip').onchange = () => { E.web_snd_set(7, +$('sndchip').value); store('sndchip', $('sndchip').value); };
     $('bkkbd').onchange = () => { E.web_set_bk_keyboard($('bkkbd').checked ? 1 : 0); store('bkkbd', $('bkkbd').checked ? '1' : '0'); };
   }
   // monitor: colour TV, black & white, green phosphor (the monochrome picture in the phosphor's colour)
@@ -884,9 +930,42 @@
   const caps = (e) => (e.getModifierState && e.getModifierState('CapsLock')) ? 1 : 0;
   // joystick on port 177714: bits of the on-screen JOY (PORT) and of the PC NumPad (Num Lock off), as EmulateJoystickDown
   let joyBits = 0;
-  function joyPort(bit, d) { joyBits = d ? joyBits | bit : joyBits & ~bit; if (E) E.web_joy(joyBits); }
+  function joyPort(bit, d) { joyBits = d ? joyBits | bit : joyBits & ~bit; if (E && !mouseOn) E.web_joy(joyBits); }
+  // mouse "Marsianka" on port 177714 (as BK Emulator 4.6): moves of the PC mouse (pointer lock) or of a finger on the screen
+  let mouseOn = false, mouseTouch = null;
+  function cpuUI() { const v = E.web_get_cpu_opts(); document.querySelectorAll('#options [data-cpu]').forEach((c) => { c.checked = !!(v & +c.dataset.cpu); }); }
+  function setMouse(v) {
+    mouseOn = !!v; if (E) E.web_mouse(mouseOn ? 1 : 0);
+    $('mousemars').checked = mouseOn;
+    if (!mouseOn && document.pointerLockElement === canvas) document.exitPointerLock();
+  }
+  function bindMouse() {
+    const btn = (e) => (e.buttons & 1 ? 0o40 : 0) | (e.buttons & 2 ? 0o100 : 0);
+    canvas.addEventListener('pointerdown', (e) => {
+      if (!mouseOn || !E) return;
+      if (e.pointerType === 'mouse') {
+        if (document.pointerLockElement !== canvas) { try { const r = canvas.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (x) {} return; }
+        E.web_mouse_btn(btn(e));
+      } else { mouseTouch = { x: e.clientX, y: e.clientY, t: performance.now() }; }
+    });
+    canvas.addEventListener('pointerup', (e) => {
+      if (!mouseOn || !E) return;
+      if (e.pointerType === 'mouse') { if (document.pointerLockElement === canvas) E.web_mouse_btn(btn(e)); }
+      else if (mouseTouch) { // a short tap without moving: the left button
+        if (performance.now() - mouseTouch.t < 250 && Math.hypot(e.clientX - mouseTouch.x, e.clientY - mouseTouch.y) < 6) { E.web_mouse_btn(0o40); setTimeout(() => E && E.web_mouse_btn(0), 120); }
+        mouseTouch = null;
+      }
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!mouseOn || !E) return;
+      if (document.pointerLockElement === canvas) E.web_mouse_move(e.movementX, e.movementY);
+      else if (mouseTouch && e.pointerType !== 'mouse') { const k = 256 / canvas.getBoundingClientRect().height * 2; E.web_mouse_move(Math.round((e.clientX - mouseTouch.x) * k), Math.round((e.clientY - mouseTouch.y) * k)); mouseTouch.x = e.clientX; mouseTouch.y = e.clientY; }
+    });
+    canvas.addEventListener('contextmenu', (e) => { if (mouseOn) e.preventDefault(); });
+    document.addEventListener('pointerlockchange', () => { if (document.pointerLockElement !== canvas && E) E.web_mouse_btn(0); });
+  }
   const NUMJOY = { Numpad8: 1, Numpad6: 2, Numpad2: 4, Numpad4: 8, Numpad5: 0o20, Numpad7: 0o40, Numpad9: 0o100, Numpad1: 0o200, Numpad3: 0o400 };
-  let numJoy = load('numjoy') !== '0';
+  let numJoy = load('numjoy') === '1'; // off by default (NumPad keys stay keys)
   function keyEvent(e, isDown) {
     if (!E || switching) return;
     const t = e.target;
@@ -2049,6 +2128,7 @@
     bindPerf();
     bindRest();
     bindText();
+    bindMouse();
     bindWindows();
     bindKeys();
     bindVKbd();

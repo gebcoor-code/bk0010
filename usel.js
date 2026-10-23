@@ -239,7 +239,12 @@
   function init() {
     cssMirror();
     scan(document.body);
-    new MutationObserver((ms) => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) scan(n); }).observe(document.body, { childList: true, subtree: true });
+    new MutationObserver((ms) => {
+      for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) scan(n);
+      if (pop && popAnchor && !popAnchor.getClientRects().length) close(); // its window was closed (hidden): the list goes too
+    }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden', 'class', 'style'] });
+    // Esc with a list open closes the list only: the window under it (handled on the way down) does not get the key
+    window.addEventListener('keydown', (e) => { if (pop && e.key === 'Escape') { close(); e.preventDefault(); e.stopPropagation(); } }, true);
     document.addEventListener('pointerdown', (e) => { if (pop && !pop.contains(e.target) && !(popAnchor && popAnchor.contains(e.target))) close(); }, true);
     window.addEventListener('resize', place);
     if (window.visualViewport) window.visualViewport.addEventListener('resize', place);
@@ -248,6 +253,6 @@
       document.querySelectorAll('select.usel-src').forEach((s) => { const b = done.get(s); if (b && b._sig && !b._sig.endsWith('|' + s.selectedIndex)) render(s); });
     }, 400);
   }
-  window.UnrealSelect = Object.assign(api, { init, enhance, close, isBox: (el) => !!(el && el.closest && el.closest('.usel')) });
+  window.UnrealSelect = Object.assign(api, { init, enhance, close, isBox: (el) => !!(el && el.closest && el.closest('.usel')), isOpen: () => !!pop });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

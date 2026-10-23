@@ -262,7 +262,7 @@
       body.scrollTop = Math.max(0, line * lh - body.clientHeight / 3);
     }
     function open(f, title) {
-      const bi = /\.(MSF|BKSCRIPT)$/i.test(title) ? null : binInfo(f.data);
+      const b0 = /\.(MSF|BKSCRIPT)$/i.test(title) ? null : binInfo(f.data), bi = b0 && !b0.odd ? b0 : null; // a header only when its length fits the file
       // .bin files: the data without the header (the left column shows BK addresses)
       file = Object.assign({}, f, { bin: bi, body: bi ? f.data.subarray(bi.off, bi.off + bi.len) : f.data });
       $('fvtitle').textContent = title;
@@ -302,6 +302,55 @@
   }
 
   // ---- editor (F4): text in an encoding (each byte has its character: the file comes back byte for byte) or hex
+  // ---- BKTurbo8, cross-assembler of BK Emulator 4.6 (gid): bkasm.wasm, a WASI command started once per source.
+  // asm(name, bytes) → { code, out: [lines], bin, lst } (bin: .bin with its header, null on errors)
+  const ASM_EXT = /^(ASM|MAC|S|A|INC)$/i;
+  let asmMod = null;
+  async function asm(name, src) {
+    if (!asmMod) asmMod = fetch('bkasm.wasm').then((r) => { if (!r.ok) throw new Error('bkasm.wasm: ' + r.status); return r.arrayBuffer(); }).then((b) => WebAssembly.compile(b));
+    let mod; try { mod = await asmMod; } catch (e) { asmMod = null; throw e; }
+    const W = window.UnrealWasi, fs = new W.MemFS(), out = [];
+    const nm = name.replace(/[^\w.-]/g, '_');
+    fs.write(nm, src);
+    const utf8 = (s) => new TextDecoder().decode(Uint8Array.from(s, (c) => c.charCodeAt(0) & 255));
+    const w = new W.WASI(fs, { stdout: (s) => out.push(utf8(s)) });
+    const args = ['bkasm', '-l', 'CO', nm].map((a) => new TextEncoder().encode(a + '\0'));
+    const mem = () => new DataView(w.memory.buffer);
+    const extra = {
+      args_sizes_get(c, sz) { mem().setUint32(c, args.length, true); mem().setUint32(sz, args.reduce((n, a) => n + a.length, 0), true); return 0; },
+      args_get(argv, buf) { let o = buf; args.forEach((a, i) => { mem().setUint32(argv + i * 4, o, true); new Uint8Array(w.memory.buffer).set(a, o); o += a.length; }); return 0; },
+      environ_sizes_get(c, sz) { mem().setUint32(c, 0, true); mem().setUint32(sz, 0, true); return 0; },
+      environ_get() { return 0; },
+      random_get(p, n) { crypto.getRandomValues(new Uint8Array(w.memory.buffer, p, n)); return 0; },
+      path_unlink_file(fd, p, l) { fs.remove(w.str(p, l)); return 0; },
+      fd_readdir(fd, buf, len, cookie, used) { // the directory: the files of the in-memory fs (one level: the sources)
+        const h = w.fds.get(fd), dir = fd === 3 ? '' : h && h.dir ? W.normPath(h.path).toLowerCase() : null;
+        if (dir === null) return 8;
+        const names = [...fs.files.values()].map((f) => f.name).filter((n) => { const k = n.toLowerCase(); return dir ? k.startsWith(dir + '/') && !k.slice(dir.length + 1).includes('/') : !k.includes('/'); })
+          .map((n) => (dir ? n.slice(dir.length + 1) : n));
+        const all = ['.', '..'].concat(names), u8 = new Uint8Array(w.memory.buffer), v = mem();
+        let o = 0;
+        for (let i = Number(cookie); i < all.length; i++) {
+          const nb = new TextEncoder().encode(all[i]), ent = new Uint8Array(24 + nb.length), dv = new DataView(ent.buffer);
+          dv.setBigUint64(0, BigInt(i + 1), true); dv.setBigUint64(8, BigInt(i + 1), true); dv.setUint32(16, nb.length, true); dv.setUint8(20, i < 2 ? 3 : 4); ent.set(nb, 24);
+          const n = Math.min(ent.length, len - o); u8.set(ent.subarray(0, n), buf + o); o += n;
+          if (o >= len) break;
+        }
+        v.setUint32(used, o, true); return 0;
+      },
+      proc_exit(code) { throw { exit: code }; },
+    };
+    const imports = new Proxy(Object.assign({}, w.imports, extra), { get: (t, k) => (k in t ? t[k] : () => 52) }); // the rest: ENOSYS
+    const inst = await WebAssembly.instantiate(mod, { wasi_snapshot_preview1: imports });
+    w.setMemory(inst.exports.memory);
+    let code = 0;
+    try { inst.exports._start(); } catch (e) { if (e && e.exit !== undefined) code = e.exit; else { code = -1; out.push(String(e && e.message || e)); } }
+    for (const i of [0, 1]) if (w.outbuf[i]) out.push(utf8(w.outbuf[i]));
+    const base = nm.replace(/\.[^.]*$/, '');
+    const lines = out.filter((l, i, a) => l.trim() || (i && a[i - 1].trim()));
+    return { code, out: lines, bin: code === 0 ? fs.read(base + '.bin') : null, lst: fs.read(base + '.lst') };
+  }
+
   function makeEditor(api) {
     const w = $('fewin'), ta = $('fetext'), hx = $('fehex'), rows = hx.querySelector('.ferows'), sp = hx.querySelector('.fesp');
     let doc = null, mode = api.load('fe.mode') === 'hex' ? 'hex' : 'text', enc = api.load('fv.enc') || 'bk', bytes = null, dirty = false, eol = '\n', ctrlZ = false;
@@ -404,6 +453,7 @@
       enc = api.load('fv.enc') || enc; $('feenc').value = enc; $('femode').value = mode;
       w.hidden = false; fw.place();
       ta.hidden = mode !== 'text'; hx.hidden = mode !== 'hex'; wrapShown();
+      $('feasm').hidden = !o.asm;
       if (mode === 'text') { ta.value = toText(bytes); ta.scrollTop = 0; ta.focus(); ta.setSelectionRange(0, 0); } else { hx.scrollTop = 0; hx.focus(); drawHex(); }
       setDirty(false);
     }
@@ -444,6 +494,17 @@
       api.store('fv.enc', enc); (mode === 'text' ? ta : hx).focus();
     };
     $('fesave').onclick = save; $('fesaveas').onclick = () => saveAs(''); $('feclose').onclick = close;
+    async function assemble() {
+      if (!doc || !doc.asm || dlgEnd) return;
+      const r = current(); if (mode === 'text') bytes = r.b;
+      info('Assembling…');
+      let res; try { res = await doc.asm(r.b); } catch (e) { info('Assembler: ' + e.message, true); return; }
+      info(res.msg, !res.ok);
+      const body = document.createElement('pre'); body.className = 'feasm'; body.textContent = res.out.join('\n');
+      const go = await ask({ title: 'Assemble ' + doc.name, text: res.msg + '\n', body, ok: res.ok ? 'Run' : 'OK', no: 'Close' });
+      if (go && res.ok) { const e = res.run(); if (e) info(e, true); }
+    }
+    $('feasm').onclick = assemble;
     ta.addEventListener('input', () => { if (!dirty) setDirty(true); });
     hx.addEventListener('scroll', drawHex);
     hx.addEventListener('pointerdown', (e) => {
@@ -490,6 +551,7 @@
       else if ((k === 'F2' && e.shiftKey) || ((e.ctrlKey || e.metaKey) && e.shiftKey && (k === 's' || k === 'S'))) saveAs('');
       else if (k === 'F2' || ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'S'))) save();
       else if (k === 'F4') setMode(mode === 'text' ? 'hex' : 'text');
+      else if (k === 'F9') assemble();
       else if (e.altKey && e.code === 'KeyW' && mode === 'text') setWrap(!wrap);
       else if (k === 'F8') { const i = ENC.findIndex((x) => x[0] === enc); $('feenc').value = ENC[(i + 1) % ENC.length][0]; $('feenc').onchange(); }
       else { e.stopPropagation(); return; } // typing stays in the editor
@@ -542,7 +604,7 @@
       const d = api.drives().find((x) => x.i === i); if (!d) return { err: 'not mounted' };
       const data = api.driveData(i); if (!data) return { err: 'no image' };
       const disk = window.BKDisk.open(d.name, data);
-      if (!disk) return { err: d.hdd ? 'HDD image: files are not shown (Eject: ⏏)' : 'unknown file system' };
+      if (!disk) { const os = !d.hdd && window.BKDisk.parse ? window.BKDisk.parse(data).os : ''; return { err: d.hdd ? 'HDD image: files are not shown (Eject: ⏏)' : os ? os + ': files are not shown' : 'unknown file system' }; }
       const ro = { kind: disk.kind, label: disk.label, files: disk.files, dirs: disk.dirs, free: disk.free };
       const set = { name: d.label, kind: disk.kind, disk: ro, mounted: true, files: disk.files.map((f) => ({ path: f.path, data: f.data, disk: f })) };
       const old = dvols.get(i), vol = setVolume(set, disk.kind);
@@ -775,6 +837,7 @@
       if (k === 'F3') { view(); return true; }
       if (k === 'F4') { edit(); return true; }
       if (k === 'F7') { mkdir(); return true; }
+      if (k === 'F9') { asmCur(); return true; }
       if (k === 'F5') { copy(); return true; }
       if (k === 'F8' || k === 'Delete') { del(); return true; }
       if (k === 'F2') { fillSrc(); load(0); load(1); status('Re-read'); return true; }
@@ -811,6 +874,32 @@
       if (res) { status(res, true); return; }
       show(false);
     }
+    // assemble a source (BKTurbo8): NAME.BIN and NAME.LST next to it (in RAM when its set is a disk image)
+    async function asmSource(p, name, data) {
+      const r = await asm(name, data), { base } = splitName(name.toUpperCase());
+      let vol = p.vol, where = srcName(p) + (vol.path !== '/' ? ' ' + vol.path : '');
+      if (vol.set.disk) { vol = openVol('RAM').vol; where = 'RAM' + (vol.path !== '/' ? ' ' + vol.path : ''); }
+      if (r.lst) vol.write({ name: base, ext: 'LST', data: r.lst, replace: true });
+      if (r.bin) vol.write({ name: base, ext: 'BIN', data: r.bin, replace: true });
+      fillSrc(); load(0); load(1);
+      const bi = r.bin && binInfo(r.bin), full = (vol.dir() + base + '.BIN').toUpperCase();
+      const msg = bi ? `${base}.BIN: ${bi.len} bytes at ${oct(bi.addr)} → ${where}` : `Errors: see ${base}.LST in ${where}`;
+      return { ok: !!bi, msg, out: r.out, file: full,
+        run: () => { const f = vol.set.files.find((x) => x.path.toUpperCase() === full); return f ? api.run(vol, f, false) : 'no ' + base + '.BIN'; } };
+    }
+    async function asmCur() {
+      const s = P[act]; if (!s.vol) return;
+      const it = s.items[s.cur]; if (!it || it.dir || !ASM_EXT.test(it.ext || '')) { status('F9: assembler (BKTurbo8) for .ASM / .MAC sources', true); return; }
+      status('Assembling ' + fname(it) + '…');
+      let res; try { res = await asmSource(s, fname(it), s.vol.read(it).data); } catch (e) { status('Assembler: ' + e.message, true); return; }
+      status(res.msg, !res.ok);
+      const i = s.items.findIndex((x) => !x.dir && (s.vol.dir() + fname(x)).toUpperCase() === res.file); if (i >= 0) { s.cur = i; draw(act); }
+      const errs = res.out.filter((l) => /^Line \d+/.test(l)).slice(0, 6).join('\n');
+      if (!res.ok) { await ask({ title: 'Assemble ' + fname(it), text: res.msg + (errs ? '\n' + errs : ''), buttons: ['OK'] }); return; }
+      if (!await ask({ title: 'Assemble ' + fname(it), text: res.msg + `\nRun it on ${api.modelName()}? Machine will be reset.`, ok: 'Run', no: 'No' })) return;
+      const e = res.run(); if (e) { status(e, true); return; }
+      show(false);
+    }
     function edit() {
       const s = P[act]; if (!s.vol) return;
       const it = s.items[s.cur]; if (!it || it.dir) return;
@@ -821,6 +910,7 @@
         save: (b) => { const { base, ext } = splitName(name); vol.write({ name: base, ext, data: b, replace: true }); if (vol.set.disk && vol.set.reload) vol.set.reload(); P.forEach((p, i) => { if (p.src === src) load(i); }); return 'Saved to ' + where(s); },
         saveAs: (b, nm, panel) => { const p = P[panel]; if (!p.vol) throw new Error('no set in that panel'); const { base, ext } = splitName(nm.toUpperCase()); p.vol.write({ name: base, ext, data: b }); load(panel); return { title: srcName(p) + ' ' + nm.toUpperCase(), msg: 'Saved to ' + where(p) }; },
         targets: () => P.map((p, i) => [i, where(p)]), here: () => act,
+        asm: ASM_EXT.test(splitName(name).ext) ? (b) => asmSource(s, name, b) : null,
       });
     }
     function view() {
@@ -855,7 +945,7 @@
       await api.eject(d); fillSrc(); load(0); load(1); status('Ejected');
     }; });
     P.forEach((p, i) => { const so = p.el.querySelector('.fcsort'); so.value = p.sort; so.onchange = () => { p.sort = so.value; api.store('fc.sort' + i, p.sort); p.items = p.vol ? sortItems(p.vol.list(), p.sort) : []; p.sel.clear(); setAct(i); draw(i); setTimeout(() => p.el.querySelector('.fclist').focus(), 0); }; });
-    $('fcview').onclick = view; $('fcedit').onclick = edit; $('fcmkdir').onclick = mkdir;
+    $('fcview').onclick = view; $('fcedit').onclick = edit; $('fcmkdir').onclick = mkdir; $('fcasm').onclick = asmCur;
     $('fccopy').onclick = copy; $('fcdel').onclick = del;
     let upAsSet = false;
     $('fcfile').onchange = (e) => { if (e.target.files.length) upload(e.target.files, upAsSet); e.target.value = ''; };
@@ -900,6 +990,7 @@
     const viewer = makeViewer(api);
     const editor = makeEditor(api);
     function show(v) {
+      if (!v) menuClose();
       if (!v && dlgDone) dlgDone(false);
       if (!v) { viewer.close(); editor.close(); }
       if (!v && !$('fchelp').hidden) helpShow(false);
@@ -913,8 +1004,8 @@
     return {
       show, get open() { return !win.hidden; }, hasFocus: () => win.contains(document.activeElement) || viewer.hasFocus() || editor.hasFocus(),
       current, ask, dialogOpen: () => !!dlgDone, addSet: (set, other) => addSet(set, other ? 1 - act : act), refresh: () => { if (!win.hidden) { fillSrc(); load(0); load(1); } },
-      select,
+      select, menuOpen: () => !!mpop, closeMenu: () => menuClose(),
     };
   }
-  window.BKFC = { create, binInfo, bkName, splitName, setVolume, _test: { PDP } };
+  window.BKFC = { create, binInfo, bkName, splitName, setVolume, asm, _test: { PDP, asm } };
 })();

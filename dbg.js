@@ -34,8 +34,9 @@
       }
       return pc;
     }
+    let asmEdit = false; // a line of the listing is being assembled: the listing is not redrawn meanwhile
     function render() {
-      if (!E() || win.hidden) return;
+      if (!E() || win.hidden || asmEdit) return;
       const run = E().web_dbg_running(), pc = E().web_reg(7);
       $('dbgstate').textContent = run ? 'running' : 'stopped';
       $('dbgstate').classList.toggle('run', !!run);
@@ -101,6 +102,38 @@
       inp.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') fin(true); else if (e.key === 'Escape') fin(false); });
       inp.addEventListener('blur', () => fin(true));
     }
+    // assemble one line at the cursor (BKTurbo8 of File Commander: .LA address, the line, .END); its words go to memory
+    function asmLine() {
+      if (cur < 0 || asmEdit || !window.BKFC || !window.BKFC.asm) return;
+      const i = lines.findIndex((l) => l.a === cur); if (i < 0) return;
+      const row = $('dbglist').children[i], l = lines[i], a = l.a;
+      const inp = document.createElement('input'); inp.className = 'dbgin dbgasm'; inp.value = l.text; inp.spellcheck = false;
+      inp.title = 'Instruction (octal numbers; decimal with dot), Enter: write to ' + oct(a) + ', Esc: cancel';
+      row.textContent = ' ' + oct(a) + '  '; row.appendChild(inp); asmEdit = true; inp.focus(); inp.select();
+      const state = (t, err) => { $('dbgstate').textContent = t; $('dbgstate').classList.toggle('run', !err); };
+      const end = (next) => { asmEdit = false; if (next !== undefined) cur = next; render(); $('dbglist').focus(); };
+      let busy = false;
+      inp.addEventListener('keydown', async (e) => {
+        e.stopPropagation();
+        if (e.key === 'Escape') { e.preventDefault(); end(); return; }
+        if (e.key !== 'Enter' || busy) return;
+        e.preventDefault(); busy = true;
+        // branches to a number: BKTurbo8 takes a bare number there as a label, so it becomes . ± offset
+        const line = inp.value.trim().replace(/^((?:BR|BNE|BEQ|BGE|BLT|BGT|BLE|BPL|BMI|BHI|BLOS|BVC|BVS|BCC|BCS|BHIS|BLO)\s+|SOB\s+(?:R[0-7]|SP|PC)\s*,\s*)([0-7]+)$/i,
+          (m, op, n) => { const d = ((parseInt(n, 8) - a) << 16) >> 16; return op + (d ? '.' + (d < 0 ? '-' : '+') + Math.abs(d).toString(8) : '.'); });
+        const src = '\t.LA ' + oct(a) + '\n\t' + line + '\n\t.END\n';
+        let r; try { r = await window.BKFC.asm('LINE.ASM', new TextEncoder().encode(src)); } catch (x) { state('assembler: ' + x.message, true); busy = false; return; }
+        if (!r.bin || r.bin.length < 6) {
+          const er = (r.out.find((t) => /Error \d+/.test(t)) || 'error').replace(/^Line \d+ \(Addr: \d+\) - /, '');
+          state(er, true); busy = false; inp.focus(); return;
+        }
+        const n = (r.bin[2] | (r.bin[3] << 8)) >> 1;
+        for (let k = 0; k < n; k++) E().web_dbg_poke((a + k * 2) & 0xFFFF, r.bin[4 + k * 2] | (r.bin[5 + k * 2] << 8));
+        end((a + n * 2) & 0xFFFF);
+        state(n + (n > 1 ? ' words' : ' word') + ' at ' + oct(a));
+      });
+      inp.addEventListener('blur', () => { if (asmEdit && !busy) end(); });
+    }
     function toggleBp(a) {
       if (bps.has(a)) { bps.delete(a); E().web_dbg_bp(a, 0); } else { bps.add(a); E().web_dbg_bp(a, 1); }
       api.store('dbg.bp', JSON.stringify([...bps])); render();
@@ -119,8 +152,9 @@
     $('dbgrun').onclick = act.run; $('dbgstop').onclick = act.stop; $('dbgstep').onclick = act.step;
     $('dbgover').onclick = act.over; $('dbgout').onclick = act.out; $('dbgto').onclick = act.to;
     $('dbgbp').onclick = () => { if (cur >= 0) toggleBp(cur); };
+    $('dbgasm').onclick = asmLine;
     // command buttons do not take the focus (Run / Stop get disabled): keys stay with the listing
-    for (const id of ['dbgrun', 'dbgstop', 'dbgstep', 'dbgover', 'dbgout', 'dbgto', 'dbgbp']) $(id).addEventListener('mousedown', (e) => { e.preventDefault(); $('dbglist').focus(); });
+    for (const id of ['dbgrun', 'dbgstop', 'dbgstep', 'dbgover', 'dbgout', 'dbgto', 'dbgbp', 'dbgasm']) $(id).addEventListener('mousedown', (e) => { e.preventDefault(); $('dbglist').focus(); });
     const goIn = $('dbggo');
     goIn.addEventListener('keydown', (e) => {
       e.stopPropagation();
@@ -143,6 +177,7 @@
       else if (k === 'F9') { if (cur >= 0) toggleBp(cur); }
       else if (k === 'g' || k === 'G') { goIn.focus(); goIn.select(); }
       else if (k === 'm' || k === 'M') { memIn.focus(); memIn.select(); }
+      else if (k === 'a' || k === 'A' || k === 'Enter') asmLine();
       else if (k === 'ArrowDown') { const i = lines.findIndex((l) => l.a === cur); if (i >= 0 && i < lines.length - 1) cur = lines[i + 1].a; else { top = (top + dis(top).len) & 0xFFFF; cur = (cur + dis(cur).len) & 0xFFFF; } render(); }
       else if (k === 'ArrowUp') { const i = lines.findIndex((l) => l.a === cur); if (i > 0) cur = lines[i - 1].a; else { top = (top - 2) & 0xFFFF; cur = top; } render(); }
       else if (k === 'PageDown') { top = lines[lines.length - 1].a; cur = top; render(); }

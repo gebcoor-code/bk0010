@@ -265,3 +265,60 @@
   windows, Esc closes it
 - Tools → Text: From BASIC removed
 * Tools → Text: hint text in empty window wraps (went past right edge of window)
+
+        version 0.26.0                  23 oct 2026
+
++ mouse "Marsianka" on port 177714 (port of BK Emulator 4.6): Options → Input; PC mouse
+  taken by click on BK screen (Esc frees it), finger drag on touch screens, tap = left
+  button
++ ЙЦУКЕН in ЛАТ (port of BK Emulator 4.6): PC keys by their place on BK keyboard
++ Options → Sound: AY chip — YM2149 (32 volume levels, default as BK Emulator 4.6) or
+  AY-3-8910 (16 levels)
+* BK-0011 palettes 06, 07, 09, 10 and grey levels of monochrome screen as BK Emulator 4.6
+
+        version 0.27.0                  23 oct 2026
+
++ CPU as real 1801VM1 (port of BK Emulator 4.6, on by default; Options → System): C bit
+  bug (after MOVB / SWAB / MFPS to register next branch sees C = 0), 177702 leaves bus
+  after write until EMT (trap 4), MOVB PC,Rn prefetch bug (next instruction runs twice)
+
+        version 0.28.0                  23 oct 2026
+
++ assembler BKTurbo8 (cross-assembler of BK Emulator 4.6 by gid, bkasm.wasm): File
+  Commander Asm (F9) on .ASM / .MAC source and Asm (F9) in editor — NAME.BIN and
+  NAME.LST next to source (RAM for disk images), errors shown, then Run
+
+        version 0.29.0                  23 oct 2026
+
++ disk images: system of image as BK Emulator 4.6 (BKParseImage): ANDOS, MKDOS, AODOS,
+  NORD, MicroDOS, CSIDOS3, RT-11, NCDOS, DX-DOS, OPTOK, Holography, Dale OS, MS-DOS —
+  in mount question and File Commander; Boot offered for system disks (NOP at start of
+  boot block)
++ Options → Disk: New HDD image (port of HDDImgMaker of BK Emulator 4.6) — cylinders,
+  heads, sectors; Mount as slave (SMK-512) or Download
+
+        version 0.30.0                  23 oct 2026
+
++ Debugger: Asm (A, Enter) — instruction at cursor line is edited in place and
+  assembled by BKTurbo8 (octal numbers, branches to address), its words written to
+  memory; errors in status
+
+        version 0.30.1                  23 oct 2026
+
+@ Options → Input: NumPad joystick off by default
+@ assembler loads faster: bkasm.wasm 191 KB instead of 663 KB (no C++ locale, regex,
+  iostreams and std::format inside; output the same)
+
+        version 0.30.4                  23 oct 2026
+
+* img/list.json: groups other than files, disks, scripts, states (asm …) were not shown
+  in Load menu and File Commander
+* Esc with drop-down list or menu open closed window under it, list stayed on screen;
+  now Esc closes only list / menu (all windows, toolbar menus, File Commander Files menu)
+
+        version 0.30.5                  23 oct 2026
+
+* viewer: text files lost first characters (first 4 bytes taken as .bin header even when
+  its length did not fit the file)
+* fields and buttons with focus: double frame (browser ring over accent border), now
+  one accent border; Wrap (viewer, editor) on: text was the colour of the button

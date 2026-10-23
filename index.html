@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="build" content="20261023163756">
+<meta name="build" content="20261023181402">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" href="icon.png">
@@ -38,6 +38,12 @@ select option { background: var(--panel2); color: var(--text); }
 button:hover:not(:disabled), select:hover { border-color: var(--accent); }
 button:disabled { opacity: .4; cursor: default; }
 button.on { background: var(--accent); color: #1a1208; border-color: var(--accent); }
+/* focus: one accent border, no browser ring over it (it made double frames) */
+:focus-visible { outline: none; }
+button:focus-visible { border-color: var(--accent); }
+input:not([type=checkbox]):not([type=radio]):not([type=range]):focus, textarea:focus { outline: none; border-color: var(--accent); }
+#fcdlg .dlgin:focus, #fedlg .fesa input:focus, .dbgbar input:focus, .gfxbar input:focus, .hddgrid input:focus, .ragrid input:focus, #fvgo:focus, #fvorg:focus { border-color: var(--accent); }
+input[type=checkbox]:focus-visible, input[type=radio]:focus-visible, input[type=range]:focus-visible { outline: 1px solid var(--accent); outline-offset: 1px; }
 #model { font-size: 12px; color: var(--dim); padding: 0 4px; font-family: ui-monospace, Consolas, monospace; }
 /* the emulator screen: a window like the others, without a close button and not movable */
 #screenwin { align-self: flex-start; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 12px 40px rgba(0,0,0,.45); }
@@ -244,6 +250,7 @@ button.ico.wide { width: auto; padding: 0 7px; gap: 4px; font-size: 12px; font-w
 .dbgbar { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 4px 6px; border-bottom: 1px solid var(--line); font-size: 11px; color: var(--dim); }
 .dbgbar button { padding: 1px 7px; font-size: 11px; border-radius: 4px; }
 .dbgbar kbd { font: 9px ui-monospace, Consolas, monospace; color: var(--dim); margin-left: 2px; }
+.dbgin.dbgasm { width: calc(100% - 10ch); }
 .dbgbar input, .dbgin { width: 7ch; height: 22px; padding: 0 4px; font: 12px ui-monospace, Consolas, monospace; background: var(--panel2); color: var(--text); border: 1px solid var(--accent); border-radius: 4px; }
 .dbgbar input { border-color: var(--line); }
 #dbgstate { font: 11px ui-monospace, Consolas, monospace; color: var(--warn); margin-left: auto; }
@@ -315,7 +322,7 @@ button.ico.wide { width: auto; padding: 0 7px; gap: 4px; font-size: 12px; font-w
 .fvbar { display: flex; gap: 6px; align-items: center; padding: 4px 6px; border-bottom: 1px solid var(--line); font-size: 11px; color: var(--dim); }
 .fvbar select { height: 24px; font-size: 12px; }
 .fvbar .fvwrap { height: 24px; padding: 0 8px; font-size: 12px; }
-.fvbar .fvwrap.on { border-color: var(--accent); color: var(--accent); }
+.fvbar .fvwrap.on { background: var(--accent); border-color: var(--accent); color: #1a1208; }
 .fvbar [hidden] { display: none; }
 #fvgo { width: 7ch; height: 24px; padding: 0 4px; font: 12px ui-monospace, Consolas, monospace; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 4px; margin-left: -4px; }
 #fvorg { width: 7ch; height: 24px; padding: 0 4px; font: 12px ui-monospace, Consolas, monospace; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 4px; margin-left: -4px; }
@@ -463,10 +470,17 @@ select.usel-src { display: none !important; }
 #fedlg { position: absolute; inset: 28px 0 0 0; z-index: 5; display: flex; align-items: center; justify-content: center; background: rgba(5,7,10,.55); }
 #fedlg .box { width: min(380px, calc(100% - 24px)); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.5); padding: 12px 14px; font-size: 13px; color: var(--text); }
 #fedlg .t { font-weight: 600; margin-bottom: 6px; } #fedlg .x { white-space: pre-line; color: var(--dim); }
+#fedlg pre.feasm { margin: 8px 0 0; max-height: 46vh; overflow: auto; padding: 6px 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 5px; font: 11px/1.35 ui-monospace, Consolas, monospace; white-space: pre-wrap; color: var(--text); }
+#fedlg .box:has(pre.feasm) { width: min(560px, calc(100% - 24px)); }
 #fedlg .btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; } #fedlg .btns button { padding: 3px 14px; }
 #fedlg .fesa { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; color: var(--text); }
 #fedlg .fesa label { display: flex; align-items: center; gap: 8px; } #fedlg .fesa input { flex: 1; min-width: 0; height: 24px; padding: 0 6px; font: 12px ui-monospace, Consolas, monospace; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 4px; }
 #fedlg .fesa select { flex: 1; min-width: 0; height: 24px; }
+
+/* New HDD image */
+.credits td a, .hbody td a { color: var(--accent); }
+.hddgrid input[type=number] { width: 90px; height: 26px; padding: 0 6px; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 5px; font: 12px ui-monospace, Consolas, monospace; }
+.hddbtns { display: flex; gap: 6px; margin-top: 8px; } .hddbtns button { height: 28px; padding: 0 12px; }
 
 /* Text window: paste into BK */
 #txtwin { width: min(460px, calc(100vw - 8px)); height: min(380px, calc(100vh - 16px)); min-width: 280px; min-height: 180px; }
@@ -638,6 +652,15 @@ select.usel-src { display: none !important; }
           <div class="ticks" id="speedticks"></div>
         </div>
       </div>
+      <div class="card">
+        <h3>CPU 1801VM1</h3>
+        <div class="optcol">
+          <label class="chk"><input type="checkbox" data-cpu="1"> C bit bug: after MOVB / SWAB / MFPS to register next branch sees C = 0</label>
+          <label class="chk"><input type="checkbox" data-cpu="2"> 177702: after write register leaves bus (trap 4) until EMT</label>
+          <label class="chk"><input type="checkbox" data-cpu="4"> MOVB PC,Rn prefetch bug: next instruction runs twice</label>
+        </div>
+        <p class="note">Behaviour of real BK processors, as BK Emulator 4.6 (on by default).</p>
+      </div>
     </div>
     <div class="pane gone" data-pane="vid">
       <div class="card">
@@ -676,12 +699,24 @@ select.usel-src { display: none !important; }
           File Commander: Enter on image — Boot or drive. Get: image with changes made by BK.</p>
         <label class="chk"><input type="checkbox" id="fddio"> Fast floppy exchange (driver call emulated)</label>
       </div>
+      <div class="card">
+        <h3>New HDD image</h3>
+        <div class="optgrid hddgrid">
+          <label for="hddc">Cylinders</label><input type="number" id="hddc" min="1" max="1024" value="40">
+          <label for="hddh">Heads</label><input type="number" id="hddh" min="1" max="16" value="16">
+          <label for="hdds">Sectors</label><input type="number" id="hdds" min="1" max="63" value="63">
+          <label>Size</label><output id="hddsize"></output>
+        </div>
+        <div class="hddbtns"><button id="hddslave" title="Blank image as HDD slave of SMK-512 (machine restarts)">Mount as slave</button><button id="hddget" title="Save blank image to computer">Download</button></div>
+        <p class="note">Blank IDE image (.hdi with drive passport, as HDDImgMaker of BK Emulator 4.6). Partition and format it on BK (SMK-512 models). Get in Drives: image with what BK wrote.</p>
+      </div>
     </div>
     <div class="pane gone" data-pane="inp">
       <div class="card">
         <h3>Keyboard</h3>
         <div class="optcol">
           <label class="chk"><input type="checkbox" id="bkkbd"> BK keyboard: no key autorepeat (as on the real BK)</label>
+          <label class="chk"><input type="checkbox" id="jcuken"> ЙЦУКЕН in ЛАТ: PC keys by their place on BK keyboard (Q = J, W = C …)</label>
         </div>
         <p class="note">PC keys for BK keys: Help (?).</p>
       </div>
@@ -692,6 +727,14 @@ select.usel-src { display: none !important; }
           <select id="sticky"><option value="0">held while pressed</option><option value="1">sticky: one key</option><option value="2">locked until tapped again</option></select>
         </div>
         <p class="note">Keyboard button at bottom right of screen: BK (BK-0010-01 keyboard), XT (PC keys), JOY (joystick).</p>
+      </div>
+      <div class="card">
+        <h3>Mouse</h3>
+        <div class="optcol">
+          <label class="chk"><input type="checkbox" id="mousemars"> Mouse "Marsianka" on port 177714</label>
+        </div>
+        <p class="note">Click on BK screen takes mouse (Esc frees it); on touch screens finger drag on screen moves it.
+          Buttons: left 040, right 0100; moves given on strobe (bit 010 written to port). Joystick on port is off meanwhile.</p>
       </div>
       <div class="card">
         <h3>Joystick</h3>
@@ -715,6 +758,7 @@ select.usel-src { display: none !important; }
         <div class="optcol">
           <label class="chk"><input type="checkbox" data-snd="0"> Speaker (port 177716)</label>
           <label class="chk"><input type="checkbox" data-snd="2"> AY-3-8910 (port 177714, BK-0011 / 0011M)</label>
+          <div class="optgrid"><label for="sndchip">AY chip</label><select id="sndchip"><option value="1">YM2149 (32 volume levels)</option><option value="0">AY-3-8910 (16 volume levels)</option></select></div>
           <label class="chk"><input type="checkbox" data-snd="1"> Covox (port 177714)</label>
           <label class="chk"><input type="checkbox" data-snd="6"> Covox: stereo (low byte left, high byte right)</label>
           <label class="chk"><input type="checkbox" data-snd="3" data-filter> Low-pass filters (softer sound)</label>
@@ -750,10 +794,12 @@ select.usel-src { display: none !important; }
         <table class="keys">
           <tr><td>CPU</td><td>K1801VM1 (3 MHz BK-0010, 4 MHz BK-0011), clock 0.25x .. 10x</td></tr>
           <tr><td>Memory</td><td>BK-0010-01 32K (+ 32K), BK-0011 / 0011M 128K pages</td></tr>
-          <tr><td>Screen</td><td>512 × 256 b&amp;w, green, 256 × 256 color; filters</td></tr>
-          <tr><td>Sound</td><td>speaker, AY-3-8910, Covox (mixed by core)</td></tr>
-          <tr><td>Keyboard</td><td>BK keyboard (PC keys emulated)</td></tr>
+          <tr><td>Screen</td><td>512 × 256 b&amp;w, green, 256 × 256 color (16 palettes of BK-0011 as BK Emulator 4.6); filters</td></tr>
+          <tr><td>Sound</td><td>speaker, AY-3-8910 / YM2149, Covox (mixed by core)</td></tr>
+          <tr><td>Keyboard</td><td>BK keyboard (PC keys emulated, ЙЦУКЕН in ЛАТ)</td></tr>
           <tr><td>Joystick</td><td>port 177714</td></tr>
+          <tr><td>Mouse</td><td>"Marsianka", port 177714</td></tr>
+          <tr><td>CPU</td><td>1801VM1 with C bit, MOVB PC and 177702 bugs of real BK (as BK Emulator 4.6)</td></tr>
           <tr><td>Tape</td><td>port 177716: .tap / .wav played as cassette</td></tr>
           <tr><td>Disks</td><td>floppy controllers KNGMD, A16M, SMK-512 (A: .. D:)</td></tr>
           <tr><td>HDD</td><td>SMK-512 (master, slave)</td></tr>
@@ -783,7 +829,8 @@ select.usel-src { display: none !important; }
         <table class="keys">
           <tr><td>File Commander</td><td>sets, mounted drives (ANDOS, FAT12, MKDOS, RT-11: view, run, copy out), RAM; boot, eject</td></tr>
           <tr><td>Viewer</td><td>text (BK KOI-8, KOI8-R, CP866, 1251), hex, octal, PDP-11 disassembler, .msf screen</td></tr>
-          <tr><td>Debugger</td><td>disassembler, registers, breakpoints, steps, memory</td></tr>
+          <tr><td>Debugger</td><td>disassembler, registers, breakpoints, steps, memory; assembler at cursor line (A)</td></tr>
+          <tr><td>Assembler</td><td>BKTurbo8: .ASM / .MAC in File Commander or editor (F9) → .BIN, .LST; <a href="https://gid.pdp-11.net/bkturbo8_doc.html" target="_blank" rel="noopener">BKTurbo8 documentation</a></td></tr>
           <tr><td>Memory map</td><td>banks of address space, pages as pictures</td></tr>
           <tr><td>Graph Search</td><td>memory as pictures (BW, Color)</td></tr>
           <tr><td>Text</td><td>paste into BK (Ctrl / Cmd+V on screen), typing a program from a text</td></tr>
@@ -802,8 +849,17 @@ select.usel-src { display: none !important; }
       </div>
       <div class="card">
         <h3>Credits</h3>
-        <p class="note">Emulation core: BK Emulator for Windows 3.7 — Yuriy Kalmykov (2002–2004), gid and contributors.
-          Web port: WebAssembly (WASI); the core is compiled as is, Windows parts (window, DirectDraw, waveOut) are replaced by a thin web layer.</p>
+        <table class="keys credits">
+          <tr><td>Core</td><td>BK Emulator for Windows 3.7: Yuriy Kalmykov (2002–2004, original from BK 0010(01)), gid (2011–). Compiled to WebAssembly (WASI) as is; window, DirectDraw, waveOut replaced by a thin web layer.
+            <a href="http://boulder-dash.narod.ru/bk_emulator.html" target="_blank" rel="noopener">emulator homepage</a> · <a href="https://gid.pdp-11.ru/" target="_blank" rel="noopener">gid.pdp-11.ru</a></td></tr>
+          <tr><td>From 4.6</td><td>BK Emulator for Windows 4.6 (2012–2026 gid): 1801VM1 behaviour (C bit, MOVB PC, 177702), mouse "Marsianka", ЙЦУКЕН, palettes, image type (BKParseImage), new HDD image (HDDImgMaker)</td></tr>
+          <tr><td>Assembler</td><td>BKTurbo8 cross-assembler (2016–2026 gid), <a href="https://gid.pdp-11.net/bkturbo8_doc.html" target="_blank" rel="noopener">BKTurbo8 documentation</a>; its floating point numbers from MACRO-11 cross-assembler of Richard Krehbiel (2001)</td></tr>
+          <tr><td>BKBTL</td><td>nzeemin: floppy controller 1801VP1-128, sound, the CPU's main loop and opcode decoding (GNU LGPL 3), <a href="https://github.com/nzeemin/bkbtl" target="_blank" rel="noopener">github.com/nzeemin/bkbtl</a></td></tr>
+          <tr><td>emu2149</td><td>YM2149 / AY-3-8910 emulator of Mitsutaka Okazaki (2001); after psg.vhd of Kazuhiro Tsujikawa, s_fme7.c of Mamiya (NEZplug), ay8910.c of MAME</td></tr>
+          <tr><td>Thanks</td><td>from the emulator's authors: Patron and anonymous (1801VM1 and its instructions), Voland and dk_spb (BK-0011 ROM dumps; Voland: AltPro SMK-512 replica, keyboard pictures), KISSER and TheGWBV (true palette table), MM (BK hardware, MS0513 repair book), severyanin (scan of the book), Terra and CD-Inc (Samara HDD, AltPro), Alexander Tishin (Sandro, BK-0010 emulator in Java), SKCorp, BD, peg, SCALOlaz, LAsoft</td></tr>
+          <tr><td>Web port</td><td>ae485</td></tr>
+          <tr><td>BK links</td><td><a href="http://zx-pk.ru/forums/59-bk-0010-0011.html" target="_blank" rel="noopener">zx-pk.ru BK forum</a> · <a href="http://bk0010.forum20.ru/forum/" target="_blank" rel="noopener">bk0010.forum20.ru</a> · <a href="http://pdp-11.ru/mybk/" target="_blank" rel="noopener">pdp-11.ru/mybk</a> · <a href="https://t.me/bk11m" target="_blank" rel="noopener">t.me/bk11m</a></td></tr>
+        </table>
       </div>
     </div>
   </div>
@@ -821,7 +877,7 @@ select.usel-src { display: none !important; }
       <tr><td>Sound</td><td>sound on / off; volume, devices, oscilloscope: Options → Sound</td></tr>
       <tr><td>Max speed</td><td>emulation as fast as browser can, no sound; fps shows frames reached</td></tr>
       <tr><td>Reset</td><td>restart BK (as power on)</td></tr>
-      <tr><td>Tools</td><td>File Commander, Debugger, Memory map, Graph Search, Text, Performance, System Info, REST API link, Save state</td></tr>
+      <tr><td>Tools</td><td>File Commander and Debugger with assembler BKTurbo8, Memory map, Graph Search, Text, Performance, System Info, REST API link, Save state</td></tr>
       <tr><td>Paste</td><td>Ctrl / Cmd+V on BK screen: clipboard text typed into BK (line end = ВВОД), at max speed. Tools → Text: Type into BK, Copy</td></tr>
       <tr><td>System</td><td>model, CPU clock (Options → System); Apply restarts machine and closes window</td></tr>
       <tr><td>Options</td><td>model, CPU clock, window size, monitor, keyboard; About (i)</td></tr>
@@ -898,7 +954,7 @@ select.usel-src { display: none !important; }
     <button id="fcview" title="View file: text, hex, octal, disassembler (F3)">View <kbd>F3</kbd></button>
     <button id="fcedit" title="Edit file: text or hex (F4)">Edit <kbd>F4</kbd></button>
     <button id="fccopy" title="Copy to other panel, folders too (F5)">Copy <kbd>F5</kbd></button>
-    <button id="fcmkdir" title="New folder (RAM, zip sets)">MkDir <kbd>F7</kbd></button>
+    <button id="fcmkdir" title="New folder (RAM, zip sets)">MkDir <kbd>F7</kbd></button><button id="fcasm" title="Assemble .ASM / .MAC source under cursor (BKTurbo8): NAME.BIN and NAME.LST next to it (F9)">Asm <kbd>F9</kbd></button>
     <button id="fcdel" title="Delete (F8)">Delete <kbd>F8</kbd></button>
     <span class="sp"></span>
     <button id="fcfiles" class="fcmenu" title="Download / upload files">Files <span class="ar">▾</span></button>
@@ -930,6 +986,7 @@ select.usel-src { display: none !important; }
       <tr><td>Edit (F4)</td><td>text or hex (offsets octal), encodings as in view; F2 / Ctrl+S save back, Shift+F2 save as (this panel or other one), F4 text / hex, F8 encoding; text: Wrap (Alt+W); hex: Tab hex / characters, Ins / Del insert / remove byte. Every byte has its character: file comes back byte for byte</td></tr>
       <tr><td>Copy (F5)</td><td>to other panel, folders with their files</td></tr>
       <tr><td>MkDir (F7)</td><td>new folder (RAM, zip sets)</td></tr>
+      <tr><td>Asm (F9)</td><td>.ASM / .MAC source → NAME.BIN and NAME.LST next to it (RAM for disk images), then Run. Cross-assembler BKTurbo8 of BK Emulator 4.6 (gid); in editor too (F9). Its messages are in Russian. <a href="https://gid.pdp-11.net/bkturbo8_doc.html" target="_blank" rel="noopener">BKTurbo8 documentation</a></td></tr>
       <tr><td>Delete (F8)</td><td>from panel, folders with their files (server file stays)</td></tr>
       <tr><td>F2</td><td>reread both panels</td></tr>
       <tr><td>Enter on image</td><td>.IMG / .BKD / .DSK / .HDI: Boot (model for image restarts from it, File Commander closes) or A: .. D: (drive, no restart); HDD: Boot (master) or Slave. The drive is then shown in this panel</td></tr>
@@ -948,7 +1005,7 @@ select.usel-src { display: none !important; }
     <button id="dbgrun" title="Run (F5)">Run <kbd>F5</kbd></button><button id="dbgstop" title="Stop (F5)">Stop</button>
     <button id="dbgstep" title="Step into (F11)">Step <kbd>F11</kbd></button><button id="dbgover" title="Step over (F10)">Over <kbd>F10</kbd></button>
     <button id="dbgout" title="Step out (Shift+F11)">Out <kbd>⇧F11</kbd></button><button id="dbgto" title="Run to cursor (F4)">To cursor <kbd>F4</kbd></button>
-    <button id="dbgbp" title="Breakpoint on cursor line (F9)">BP <kbd>F9</kbd></button>
+    <button id="dbgbp" title="Breakpoint on cursor line (F9)">BP <kbd>F9</kbd></button><button id="dbgasm" title="Assemble instruction at cursor line (A, Enter): BKTurbo8 syntax, octal numbers">Asm <kbd>A</kbd></button>
     <label>Go <input id="dbggo" maxlength="6" spellcheck="false" autocomplete="off" title="Address (octal), Enter"></label>
     <span id="dbgstate"></span>
   </div>
@@ -968,6 +1025,7 @@ select.usel-src { display: none !important; }
       <tr><td>Shift+F11</td><td>step out (to RTS / RTI / RTT)</td></tr><tr><td>F4</td><td>run to cursor line</td></tr><tr><td>F9, double click</td><td>breakpoint on cursor line</td></tr>
       <tr><td>↑ ↓ PgUp PgDn, wheel</td><td>move in code</td></tr><tr><td>G</td><td>go to address (octal)</td></tr><tr><td>M</td><td>memory dump address</td></tr>
       <tr><td>double click value</td><td>change register / memory word (octal, Enter)</td></tr>
+      <tr><td>A, Enter, Asm</td><td>assemble instruction at cursor line (BKTurbo8 syntax: octal numbers, decimal with dot; branches to address), Enter writes its words, Esc cancels. <a href="https://gid.pdp-11.net/bkturbo8_doc.html" target="_blank" rel="noopener">BKTurbo8 documentation</a></td></tr>
     </table>
     <p class="note">Screen goes on being drawn while CPU is stopped. Breakpoint stop opens this window.</p>
   </div>
@@ -1076,6 +1134,7 @@ select.usel-src { display: none !important; }
     <select id="feenc" title="Encoding (F8)"></select>
     <button id="fesave" class="fvwrap" title="Write file back to its set (F2, Ctrl+S)">Save <kbd>F2</kbd></button>
     <button id="fesaveas" class="fvwrap" title="Save under new name, in this panel or other one (Shift+F2)">Save as…</button>
+    <button id="feasm" class="fvwrap" hidden title="Assemble (BKTurbo8): NAME.BIN and NAME.LST next to source, then Run (F9)">Asm <kbd>F9</kbd></button>
     <button id="fewrap" class="fvwrap" title="Wrap long lines by words at window's width (Alt+W); file keeps its lines">Wrap</button>
     <span id="feinfo"></span>
   </div>
@@ -1097,13 +1156,13 @@ select.usel-src { display: none !important; }
   <pre id="fvbody" tabindex="0"></pre>
 </div>
 
-<script src="usel.js?v=20261023163756"></script>
-<script src="wasi_fs.js?v=20261023163756"></script>
-<script src="unzip.js?v=20261023163756"></script>
-<script src="fcmd.js?v=20261023163756"></script>
-<script src="diskfs.js?v=20261023163756"></script>
-<script src="dbg.js?v=20261023163756"></script>
-<script src="vkbd.js?v=20261023163756"></script>
-<script src="app.js?v=20261023163756"></script>
+<script src="usel.js?v=20261023181402"></script>
+<script src="wasi_fs.js?v=20261023181402"></script>
+<script src="unzip.js?v=20261023181402"></script>
+<script src="fcmd.js?v=20261023181402"></script>
+<script src="diskfs.js?v=20261023181402"></script>
+<script src="dbg.js?v=20261023181402"></script>
+<script src="vkbd.js?v=20261023181402"></script>
+<script src="app.js?v=20261023181402"></script>
 </body>
 </html>

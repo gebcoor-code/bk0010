@@ -127,9 +127,69 @@
     return { kind: 'RT-11', label: name, files, dirs: [] };
   }
 
+  // ---- what system an image is (port of CBKParseImage::ParseImage, BK Emulator 4.6 shared/BKParseImage.cpp):
+  // parse(image, offset) → { os: 'ANDOS' | 'MKDOS' | 'AODOS' | 'NORD' | 'MicroDOS' | 'CSIDOS3' | 'RT-11' | 'NCDOS' | 'DX-DOS'
+  //   | 'OPTOK' | 'Holography' | 'Dale OS' | 'MS-DOS' | '' (unknown), boot (system disk: NOP and no RESET at its start), partLen }
+  function parse(img, base) {
+    base = base || 0;
+    const B = 512, nblk = Math.floor((img.length - base) / B);
+    const blk = (n) => (base + (n + 1) * B <= img.length ? img.subarray(base + n * B, base + (n + 1) * B) : null);
+    const w = (b, o) => u16(b, o), str = (b, o, t) => { for (let i = 0; i < t.length; i++) if (b[o + i] !== t.charCodeAt(i)) return false; return true; };
+    const r = { os: '', boot: false, partLen: 0 };
+    const s = blk(0); if (!s) return r;
+    r.boot = w(s, 0) === 0o240 && w(s, 2) !== 5;
+    const ac1 = str(s, 4, 'ANDOS '), ac2 = s[0o15] === 4 && w(s, 0o21) === 112 && s[0o25] === 0o371 && w(s, 0o26) === 2;
+    if (ac1 || ac2 || str(s, 0o66, 'FAT12   ')) {
+      const boot = w(s, 0o16) * w(s, 0o13), f = blk(Math.floor(boot / B));
+      if (f && f[1] === 0xff && f[0] === s[0o25]) { r.partLen = w(s, 0o23); r.os = ac1 || ac2 ? 'ANDOS' : str(s, 4, 'DX-DOS') ? 'DX-DOS' : 'MS-DOS'; }
+      return r;
+    }
+    if (w(s, 0o400) === 0o123456) { // MicroDOS family
+      r.partLen = w(s, 0o466);
+      if (s[4] === 0o32 && (w(s, 6) === 256 || w(s, 6) === 512)) r.os = 'AODOS';
+      else if (str(s, 4, ' AO-DOS ')) r.os = 'AODOS';
+      else if (str(s, 4, 'NORD ') || str(s, 0xa0, 'BY VOLAND')) r.os = 'NORD';
+      else if (w(s, 0o402) === 0o51414) r.os = 'MKDOS';
+      else { // the directory: MKDOS folders (name starts with 0177) or AODOS ones (no length)
+        let mk = 0, ao = 0; const n = w(s, 0o30);
+        for (let i = 0; i < n; i++) { const o = 0o500 + i * 24; if (o + 24 > 10 * B || o + 24 > img.length - base) break; const c = img[base + o + 2]; if (c === 0o177) mk++; else if (c && !u16(img, base + o + 18)) ao++; }
+        r.os = mk && ao ? 'MicroDOS' : mk ? 'NORD' : ao ? 'AODOS' : 'MicroDOS';
+      }
+      return r;
+    }
+    if (w(s, 2) === 0o12700 && w(s, 4) === 0o404 && w(s, 6) === 0o104012) { r.os = 'NCDOS'; r.partLen = 1600; return r; }
+    const find = (t) => { const u = t.toUpperCase(); for (let i = 0; i + t.length <= B; i++) { let k = 0; while (k < t.length && String.fromCharCode(s[i + k]).toUpperCase() === u[k]) k++; if (k === t.length) return true; } return false; };
+    if (find('?BOOT-') || find('?QUBOOT-')) { r.os = 'RT-11'; r.partLen = nblk; return r; }
+    // RT-11: a walk through the segments of its directory
+    const b1 = blk(1);
+    if (b1) {
+      let start = w(b1, 0o724); if (!start || start > 255) start = 6;
+      if (start < nblk) {
+        let cur = 1, total = 0, used = -1, add = 0, cnt = 0, ok = true;
+        while (cur > 0) {
+          const h = blk((cur - 1) * 2 + start); if (!h) { ok = false; break; }
+          const segs = w(h, 0), next = w(h, 2), usd = w(h, 4), ab = w(h, 6), fblk = w(h, 8);
+          if (!total) { total = segs; if (total > 31) { ok = false; break; } used = usd; if (used > total) { ok = false; break; } add = ab; if (add > 252) { ok = false; break; } }
+          else if (total !== segs || add !== ab) { ok = false; break; }
+          if (fblk > nblk) { ok = false; break; }
+          cur = next; if (cur > 31 || cur > total) { ok = false; break; }
+          if (++cnt > total) { ok = false; break; }
+        }
+        if (ok && cur === 0 && cnt === used && cnt <= total) { r.os = 'RT-11'; r.partLen = nblk; return r; }
+      }
+    }
+    const b2 = blk(2);
+    if (b2 && (w(b2, 8) === 0o123123 || w(b2, 8) === 0o123124) && w(b2, 4) === 0o123123 && w(b2, 6) === 0o123123) { r.os = 'CSIDOS3'; r.partLen = w(b2, 2); return r; }
+    if (b2) { let x = 0; for (let i = 0; i < 14; i++) x = (x + w(b2, i * 2)) & 0xFFFF; if (x === 0x2a2a) { r.os = 'OPTOK'; r.partLen = 720; return r; } }
+    let crc = 0; for (let i = 0; i < 0o162; i++) { crc += s[i]; if (crc > 0xFFFF) { crc &= 0xFFFF; crc++; } }
+    if (crc === 8384) { r.os = 'Holography'; r.partLen = 800; return r; }
+    if (w(s, 2) === 0o240 && b1 && w(b1, 0) === 0x6144 && b2 && w(b2, 0o776) === 0o41125) { r.os = 'Dale OS'; r.partLen = 1600; }
+    return r;
+  }
+
   function open(name, img) {
     for (const f of [fat12, mkdos, rt11]) { try { const v = f(img, name); if (v) return v; } catch (e) { } }
     return null;
   }
-  window.BKDisk = { open };
+  window.BKDisk = { open, parse };
 })();
