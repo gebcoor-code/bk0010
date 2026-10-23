@@ -8,6 +8,9 @@
   "scripts": [
     { "name": "bkscript", "url": "img/bkscript.zip", "desc": "keyboard scripts" }
   ],
+  "asm": [
+    { "name": "asm", "url": "img/asm.zip", "desc": "asm code" }
+  ],  
   "states": [
   { "name": "snapshots", "url": "img/snaps.zip", "desc": "snapshots" }
   ]
