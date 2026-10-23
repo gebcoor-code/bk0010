@@ -154,8 +154,20 @@
     win.addEventListener('keydown', (e) => { if (['INPUT', 'SELECT'].includes(e.target.tagName) || e.target.closest('.usel')) return; if (key(e)) { e.preventDefault(); e.stopPropagation(); } });
     $('dbglist').addEventListener('wheel', (e) => { e.preventDefault(); const n = Math.sign(e.deltaY); top = (top + n * 6) & 0xFFFF; render(); }, { passive: false });
     $('dbgclose').onclick = () => show(false);
-    $('dbghelpbtn').onclick = () => { const h = $('dbghelp'); h.hidden = !h.hidden; $('dbghelpbtn').classList.toggle('on', !h.hidden); };
+    // help: its own window beside the debugger (Esc closes it)
+    let helpFW = null;
+    function helpShow(v) {
+      const h = $('dbghelp');
+      if (!helpFW) helpFW = api.floatWin(h, 'dbghelppos', () => ({ x: 0, y: 0 }));
+      h.hidden = !v; $('dbghelpbtn').classList.toggle('on', v);
+      if (v) { helpFW.setPos(api.snapRight(win.getBoundingClientRect(), h)); h.focus({ preventScroll: true }); }
+      else if (!win.hidden) $('dbglist').focus();
+    }
+    $('dbghelpbtn').onclick = () => helpShow($('dbghelp').hidden);
+    $('dbghelpclose').onclick = () => helpShow(false);
+    $('dbghelp').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); helpShow(false); } });
     function show(v) {
+      if (!v && !$('dbghelp').hidden) helpShow(false);
       win.hidden = !v; $('dbgbtn').classList.toggle('on', v);
       if (v) { syncBps(); top = -1; fw.place(); render(); $('dbglist').focus(); }
       else if (api.onClose) api.onClose();

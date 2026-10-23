@@ -3,11 +3,11 @@
   'use strict';
   const { MemFS, WASI } = window.UnrealWasi; // wasi_fs.js (shared with the Unreal Speccy web port)
 
-  const WASM_URL = 'bk.wasm?v=20261022140203';
-  const APP_VER = '0.19.4'; // About (history: changes.txt)
+  const WASM_URL = 'bk.wasm?v=20261023163756';
+  const APP_VER = '0.25.1'; // About (history: changes.txt)
   // the author's e-mail in About, as a picture (not text for address collectors): 12px, the About line's colour, 3x
   const IMG_MAIL = 'data:image/png;base64,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';
-  const BUILD = '20261022140203'; // set by make_dist.sh: the build of these files (index.html carries the same in <meta name="build">)
+  const BUILD = '20261023163756'; // set by make_dist.sh: the build of these files (index.html carries the same in <meta name="build">)
   // bk.ini of the original emulator is used as is (ROM names, options); it sits next to index.html.
   const INI_FILE = 'bk.ini';
   // Folders on the server are lower case: ROM images live in rom/ (names as in bk.ini, lower case).
@@ -160,7 +160,7 @@
   }
   async function loadSet(s) {
     if (s.set) return s.set;
-    s.set = await zipSet(s.name, await fetchBytes(s.url));
+    s.set = await zipSet(s.name, await fetchBytes(s.url)); s.set.url = s.url; // files of a server set have a URL: url/PATH (REST API link)
     return s.set;
   }
   // the "tape": the set of the program that was started (its folder first); the monitor's M command reads from it too
@@ -219,7 +219,7 @@
     if (MODELS[model].cfg >= 6) return MODELS[model].name + ': .bin runs on BK-0010 models (Options → System)';
     if (dry) return null;
     const dir = file.path.includes('/') ? file.path.replace(/[^/]*$/, '') : '';
-    tape = { vol, dir };
+    tape = { vol, dir }; runUrl = vol.set && vol.set.url ? vol.set.url + '/' + file.path : null;
     const fn = file.path.replace(/^.*\//, ''), p = tapePath(fn);
     fs.write(p, file.data);
     releaseKeys(); stopTape(); E.web_script_stop();
@@ -358,7 +358,7 @@
     return c >= 0 && c < list.length ? list[c] : null;
   }
   // an image (File Commander Enter, drop): Boot (its model restarts from it), Files (in File Commander), or a drive without restart
-  async function mountImage(name, data, ask) {
+  async function mountImage(name, data, ask, url) {
     ask = ask || (fc && fc.ask);
     const P = diskProfile(name, data);
     let i = -1, target = model, boot = false;
@@ -376,13 +376,14 @@
       else if (/^[A-D]:$/.test(b || '')) { i = 'ABCD'.indexOf(b[0]); target = await modelFor(false, ask); if (!target) return false; }
       else return false;
     }
-    await mountTo(i, name, data, target, boot);
+    await mountTo(i, name, data, target, boot, url);
     return { drive: i, boot };
   }
   // the image goes into drive i; target: the model (switched when it is not the current one); boot: restart from it
-  async function mountTo(i, name, data, target, boot) {
+  async function mountTo(i, name, data, target, boot, url) {
     const hdd = i >= 4;
     driveSet(i, name, data);
+    if (drives[i]) drives[i].url = url || null; // from the site: the REST API link builder offers it
     if (hdd && boot && drives[0]) driveSet(0, null); // boot from the HDD: no floppy in A: (the controller would boot it first)
     const restart = target !== model || hdd;
     if (target !== model) await setModel(target, true);
@@ -439,7 +440,8 @@
   let tapeWait = false, tapeName = '';
   // unicode -> cp1251 for the script (Russian letters switch РУС)
   const to1251 = (str) => Uint8Array.from([...str].map((c) => { const u = c.charCodeAt(0); return u >= 0x410 && u <= 0x44F ? u - 0x410 + 0xC0 : u === 0x401 ? 0xC5 : u === 0x451 ? 0xE5 : u < 128 ? u : 32; }));
-  async function playTape(name, data, ask) {
+  let tapeUrl = null, runUrl = null; // the tape / the .bin started, when they came from the site (REST API link builder)
+  async function playTape(name, data, ask, url) {
     const wav = /\.WAV$/i.test(name), path = 'tape/' + name.replace(/[\\/]/g, '_');
     fs.write(path, data);
     const p = cstrIn(path), r = E.web_tape_play(p, wav ? 1 : 0, 0); E.free(p);
@@ -455,7 +457,7 @@
       buttons: auto ? ['Load', 'Play', 'Cancel'] : ['Play', 'Cancel'] });
     const load = auto && k === 0, play = auto ? k === 1 : k === 0;
     if (!load && !play) { stopTape(); return false; }
-    tapeName = name;
+    tapeName = name; tapeUrl = url || null;
     if (load) {
       releaseKeys(); E.web_reset(0);
       const t = to1251(TAPE_CMD[model] + bkn + '\n'); const q = E.malloc(t.length); new Uint8Array(E.memory.buffer).set(t, q);
@@ -527,6 +529,7 @@
     }
   }
   async function loadServerItem(it) {
+    if (it.run) { await runLink(it.run); return; } // an entry with a REST API link: model, files, start
     if (/\.zip$/i.test(it.url)) { // a set: File Commander shows it in the active panel
       const s = SETS.find((x) => x.url === it.url); if (!s) return;
       if (!fc.open) fc.show(true);
@@ -572,14 +575,14 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   }
   function bindTools() {
-    fc = BKFC.create({ E: () => E, fs, floatWin, load, store, download: downloadBytes, zip: (files) => UnrealZip.create(files),
+    fc = BKFC.create({ E: () => E, fs, floatWin, snapRight, load, store, download: downloadBytes, zip: (files) => UnrealZip.create(files),
       sets: () => SETS, loadSet, openZip: zipSet, ramFiles, run: runFile, modelName: () => MODELS[model].name, onClose: () => canvas.focus(), preview: statePreview,
-      isImage: (n) => isImage(n) || isTape(n), mount: (n, d, ask) => isTape(n) ? playTape(n, d, ask) : mountImage(n, d, ask),
+      isImage: (n) => isImage(n) || isTape(n), mount: (n, d, ask, url) => isTape(n) ? playTape(n, d, ask, url) : mountImage(n, d, ask, url),
       drives: () => drives.map((d, i) => d && { i, name: d.name, hdd: i >= 4, boot: d.boot, label: DRV_NAMES[i] + ' ' + d.name }).filter(Boolean), driveData, eject: ejectDrive, boot: bootDrive });
     $('tapest').onclick = () => { stopTape(); toast('Tape stopped'); };
     $('savestbtn').onclick = () => { toolsMenu(false); saveState(); };
     // debugger, memory map, Graph Search (dbg.js)
-    const dapi = { E: () => E, floatWin, load, store, onClose: () => canvas.focus(), resume: () => { if (userPaused) setUserPaused(false); } };
+    const dapi = { E: () => E, floatWin, snapRight, load, store, onClose: () => canvas.focus(), resume: () => { if (userPaused) setUserPaused(false); } };
     dbg = BKDbg.createDebugger(dapi); mmap = BKDbg.createMemMap(dapi); gfx = BKDbg.createGfx(dapi);
     $('dbgbtn').onclick = () => { toolsMenu(false); dbg.show(!dbg.open); };
     $('mmbtn').onclick = () => { toolsMenu(false); mmap.show(!mmap.open); };
@@ -796,7 +799,7 @@
   const pcKey = (code, d) => { const k = VK[code]; if (k) E.web_key(k[0], k[1] || 0, d, 2); }; // locks 2: ЗАГЛ / СТР as they are
   // on-screen keys for the page's windows: while File Commander, the viewer, Debugger, Memory map or Graph Search is the
   // active window, the XT and BK keyboards control it (arrows, Tab, Enter, Esc, letters…); F keys always go to the page
-  const KEYWINS = ['fcwin', 'fvwin', 'dbgwin', 'gfxwin', 'mmwin'];
+  const KEYWINS = ['fcwin', 'fvwin', 'fewin', 'dbgwin', 'gfxwin', 'mmwin'];
   const synthDown = new Set();
   const keyWin = () => (!$('fcdlg').hidden ? $('fcdlg') : null) || (actWin && actWin !== scrWin && !actWin.hidden && KEYWINS.includes(actWin.id) && !(vkbd && vkbd.tab === 'joy') ? actWin : null); // an open question first
   const PC_KEYS = { Escape: 'Escape', Enter: 'Enter', NumpadEnter: 'Enter', Tab: 'Tab', Backspace: 'Backspace', Delete: 'Delete', Insert: 'Insert',
@@ -890,6 +893,7 @@
     if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' || (t.closest && t.closest('.usel')))) return;
     if (e.metaKey && !/^Meta/.test(e.code)) return; // Cmd shortcuts belong to the browser
     if (actWin !== scrWin) return; // keys go to the BK only while its window is the active one (File Commander has its own)
+    if (e.ctrlKey && e.code === 'KeyV' && !e.altKey) return; // Ctrl+V: paste (typed into the BK by the paste event)
     if (numJoy && e.code in NUMJOY && !(e.getModifierState && e.getModifierState('NumLock'))) {
       e.preventDefault();
       if (!isDown || !isPaused()) joyPort(NUMJOY[e.code], isDown ? 1 : 0);
@@ -1180,13 +1184,17 @@
         run = Math.min(Math.floor(frameAcc), 6); frameAcc -= Math.floor(frameAcc);
       }
     }
+    const t0 = performance.now();
     for (let i = 0; i < run; i++) {
       // a slow device must not dig itself in: at most ~30 ms of emulation per screen refresh
       if (i && performance.now() - now > (turbo ? 40 : 30)) break;
       frameDone(E.web_frame());
       fpsCount++; // emulated frames (50 a second at the normal speed, more at max speed)
+      if (pf.timer) pfDisk();
     }
     if (run) {
+      if (pf.timer) pfFrame(performance.now() - t0);
+      typingTick();
       tapeTick();
       const v = E.web_frame_count();
       if (v !== lastVideo) { lastVideo = v; blit(); }
@@ -1294,8 +1302,8 @@
   function snapRight(r, w) {
     const vw = document.documentElement.clientWidth;
     let x = r.right - 1;
-    if (x + w.offsetWidth > vw && r.left - w.offsetWidth + 1 >= 0) x = r.left - w.offsetWidth + 1;
-    return { x, y: r.top };
+    if (x + w.offsetWidth > vw) x = r.left - w.offsetWidth + 1 >= 0 ? r.left - w.offsetWidth + 1 : Math.max(4, vw - w.offsetWidth - 4); // no room at both sides: at the right edge, over the window
+    return { x, y: Math.max(4, Math.min(r.top, document.documentElement.clientHeight - w.offsetHeight - 4)) };
   }
 
   // About: the models and the ROM files each of them loads
@@ -1307,6 +1315,636 @@
       const b = document.createElement('td'); b.textContent = M.about;
       tr.append(a, b); t.appendChild(tr);
     }
+  }
+
+  // ------------------------------------------------------------------ System Info: the machine, the emulator and the browser in one window
+  // (from the Unreal Speccy web port). The window is built once (again only when its rows change); a value that changes is
+  // drawn on a canvas of its own: text written into the page twice a second wakes ad blockers' page scans (stalls).
+  let siFW = null, siTimer = 0;
+  const o6 = (v) => (v >>> 0).toString(8).padStart(6, '0');
+  const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const dimS = (t) => ` <span class="dim">${esc(t)}</span>`;
+  const optText = (id) => { const s = $(id); return s && s.selectedIndex >= 0 ? s.options[s.selectedIndex].textContent : ''; };
+  const mb = (n) => n >= 1048576 ? (n / 1048576).toFixed(n >= 10485760 ? 0 : 1) + ' MB' : Math.round(n / 1024) + ' KB';
+  const FDC_NAMES = { '-1': '', 0: 'KNGMD (1801VP1-128)', 1: 'A16M', 2: 'SMK-512' };
+  function siData() {
+    const kv = {};
+    for (const ln of cstr(E.web_sysinfo()).split('\n')) { const i = ln.indexOf('\t'); if (i > 0) kv[ln.slice(0, i)] = ln.slice(i + 1); }
+    return kv;
+  }
+  function siSections() {
+    const k = siData(), M = MODELS[model], fam = FAMILY(model), x = SPEEDS[speedIdx];
+    const freq = E.web_cpu_freq(), frames = E.web_frame_count(), secs = Math.floor(frames / 50);
+    const dbgStop = !E.web_dbg_running() && !userPaused;
+    const state = dbgStop ? 'stopped (debugger)' : userPaused ? 'stopped' : hiddenPaused ? 'paused (tab hidden)' : turbo ? 'running, max speed' : 'running';
+    const ram = fam === '10' ? (model === 'BK0010_01_EXT32' ? '32K + 32K pages' : '32 KB') : '128 KB (8 pages of 16K)';
+    const ctl = hasFdd(model) ? FDC_NAMES[k.fddtype] || '' : ''; // the board keeps a controller object in models without one
+    const out = [];
+    out.push(['Machine', [
+      ['Model', M.name], ['Core', k.model], ['RAM', ram + (/A16M/.test(model) ? ' + A16M 16 KB' : /SMK/.test(model) ? ' + SMK-512 512 KB' : '')],
+      ['ROM', M.files.join(', ')],
+      ['CPU clock', (freq / 1e6).toFixed(2).replace(/\.?0+$/, '') + ' MHz (' + x + 'x)'],
+      ['Frame', Math.round(freq / 50) + ' ticks, 50 Hz'],
+      ['State', state + ' · ' + $('fps').textContent],
+      ['Emulated time', Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0') + ' (' + frames + ' frames)'],
+    ]]);
+    const psw = E.web_reg(8), fl = (b, c) => (psw & b ? c : '-');
+    out.push(['CPU', [['R0', o6(E.web_reg(0))], ['R1', o6(E.web_reg(1))], ['R2', o6(E.web_reg(2))], ['R3', o6(E.web_reg(3))],
+      ['R4', o6(E.web_reg(4))], ['R5', o6(E.web_reg(5))], ['SP', o6(E.web_reg(6))], ['PC', o6(E.web_reg(7))],
+      ['PSW', o6(psw)], ['Flags', fl(16, 'T') + fl(8, 'N') + fl(4, 'Z') + fl(2, 'V') + fl(1, 'C')], ['Priority', String((psw >> 5) & 7)], ['WAIT', k.wait === '1' ? 'yes' : 'no']], 'regs']);
+    const mem = [['177716', o6(E.web_dbg_sysreg(9)) + dimS('read; written ' + o6(E.web_dbg_sysreg(11)))]];
+    if (fam !== '10') {
+      const page = (b) => { const v = E.web_memmap(b); return (v & 0x3FFFFFFF) < 0o400000 ? 'page ' + Math.floor((v & 0x3FFFFFFF) / 0o40000) : 'ROM'; };
+      mem.push(['Pages', '040000: ' + page(4) + ', 100000: ' + page(8)]);
+      mem.push(['177662', o6(E.web_dbg_sysreg(2)) + dimS('written: palette ' + ((E.web_dbg_sysreg(2) >> 8) & 15) + ', screen ' + (E.web_dbg_sysreg(2) & 0x8000 ? 6 : 5))]);
+    }
+    const sc = E.web_dbg_sysreg(3);
+    mem.push(['177664', o6(sc) + dimS('scroll ' + (sc & 255) + (sc & 0o1000 ? ', full screen' : ', 1/4 screen'))]);
+    mem.push(['Screen', E.web_get_color() ? '256×256 color' : '512×256 b&w'], ['Monitor', optText('monsel')], ['Filter', optText('fxsel')],
+      ['Picture', canvas.width + '×' + canvas.height + ' → ' + canvas.style.width + ' × ' + canvas.style.height]);
+    out.push(['Memory & video', mem]);
+    const dk = [];
+    dk.push(['Controller', ctl || '<span class="dim">none</span>']);
+    if (ctl) {
+      const f = (k.fdc || '').split('|'), att = +((k.drives || '0').split('|')[0]), ro = +((k.drives || '0|0').split('|')[1]);
+      for (let i = 0; i < 4; i++) {
+        const sel = +f[0] === i;
+        dk.push([DRV_NAMES[i], drives[i] ? esc(drives[i].name) + dimS([att & (1 << i) ? 'attached' : 'not open', ro & (1 << i) ? 'WP' : '', sel ? 'selected · track ' + f[1] + ' side ' + f[2] + (f[6] === '1' ? ' · motor' : '') : ''].filter(Boolean).join(' · ')) : '<span class="dim">empty</span>']);
+      }
+      if (/SMK/.test(model)) for (const i of [4, 5]) dk.push([DRV_NAMES[i], drives[i] ? esc(drives[i].name) : '<span class="dim">empty</span>']);
+      dk.push(['Disk I/O', fddIO ? 'fast (driver calls emulated)' : 'controller registers']);
+    }
+    const tsec = E.web_tape_seconds ? E.web_tape_seconds() : 0;
+    dk.push(['Tape', tapeName ? esc(tapeName) + dimS((E.web_tape_progress() >= 0 ? 'playing ' + E.web_tape_progress() + '%' : 'stopped') + ' · ' + tsec + ' s') : '<span class="dim">none</span>']);
+    out.push(['Storage', dk]);
+    if (ctl) {
+      const r = (k.fdcreg || '').split('|').map((v) => o6(parseInt(v, 8) || 0));
+      const f = (k.fdc || '').split('|');
+      out.push(['FDD controller', [['177130 in', r[0] + dimS('status')], ['177130 out', r[1] + dimS('command')], ['177132 in', r[2] + dimS('data read')], ['177132 out', r[3] + dimS('data written')],
+        ['Drive', f[0] === '-1' ? 'none selected' : DRV_NAMES[+f[0]] + ', track ' + f[1] + ', side ' + f[2] + (f[5] === '1' ? ', writing' : '') + (f[6] === '1' ? ', motor on' : '')]]]);
+    }
+    out.push(['Devices', [
+      ['Timer', '177706 ' + o6(E.web_dbg_sysreg(4)) + ', 177710 ' + o6(E.web_dbg_sysreg(5)) + ', 177712 ' + o6(E.web_dbg_sysreg(6))],
+      ['Port 177714', 'in ' + o6(E.web_dbg_sysreg(7)) + ', out ' + o6(E.web_dbg_sysreg(8))],
+      ['Joystick', (numJoy ? 'NumPad on' : 'NumPad off') + (joyBits ? ', bits ' + o6(joyBits) : '')],
+    ]]);
+    const ac = audio && audio.ctx, dev = [];
+    if (E.web_snd_get(0)) dev.push('speaker'); if (E.web_snd_get(1)) dev.push('Covox' + (E.web_snd_get(6) ? ' stereo' : '')); if (E.web_snd_get(2)) dev.push('AY-3-8910');
+    out.push(['Sound', [
+      ['Output', ac ? ac.state + ', ' + ac.sampleRate + ' Hz' + (ac.baseLatency ? ', latency ' + Math.round(ac.baseLatency * 1000) + ' ms' : '') + (audio.sp ? ', ScriptProcessor' : ', AudioWorklet') : 'not started (needs a click or key)'],
+      ['Volume', muted ? 'muted' : 'speaker ' + volLevel(0) + '%, AY / Covox ' + volLevel(1) + '%'],
+      ['Devices', dev.join(', ') || 'none'], ['Emulator rate', E.web_snd_rate() + ' Hz'], ['Oscilloscope', vzOn ? 'on' : 'off'],
+    ]]);
+    out.push(['Input', [
+      ['Keyboard', ($('kbdst').textContent || 'ЛАТ') + (E.web_get_bk_keyboard() ? dimS('BK layout') : dimS('PC layout'))],
+      ['On-screen', $('vkbd').hidden ? 'hidden' : (vkbd ? vkbd.tab.toUpperCase() : '') + ' panel'],
+    ]]);
+    const ua = navigator.userAgent, br = /Edg\//.test(ua) ? 'Edge' : /OPR\//.test(ua) ? 'Opera' : /Firefox\//.test(ua) ? 'Firefox' : /CriOS|Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : 'browser';
+    const ver = (ua.match(/(?:Edg|OPR|Firefox|CriOS|Chrome|Version)\/(\d+)/) || [])[1] || '';
+    out.push(['Host', [
+      ['Browser', br + (ver ? ' ' + ver : '') + ' · ' + (navigator.userAgentData && navigator.userAgentData.platform || navigator.platform || '')],
+      ['Screen', screen.width + '×' + screen.height + ', DPR ' + (window.devicePixelRatio || 1) + ', window ' + innerWidth + '×' + innerHeight],
+      ['CPU threads', navigator.hardwareConcurrency || '?'], ['Device memory', navigator.deviceMemory ? navigator.deviceMemory + ' GB' : '?'],
+      ['Touch', matchMedia('(pointer: coarse)').matches ? 'yes' : 'no'],
+      ['WASM memory', mb(E.memory.buffer.byteLength)],
+      ['Page', 'Web BK-0010 v ' + APP_VER + (BUILD !== 'dev' ? dimS('build ' + BUILD) : '')],
+    ]]);
+    return out;
+  }
+  const si = { sig: '', cells: [], vals: [] };
+  const siCellHtml = (v) => (typeof v === 'string' && /<span/.test(v) ? v : esc(v));
+  function siRender() {
+    if (!E || $('sysinfo').hidden) return;
+    const secs = siSections(), b = $('sibody');
+    const sig = secs.map(([t, rows]) => t + ':' + rows.map((r) => r[0]).join(',')).join('|');
+    const vals = []; secs.forEach(([, rows]) => rows.forEach((r) => vals.push(siCellHtml(r[1]))));
+    if (sig !== si.sig) {
+      const top = b.scrollTop;
+      b.innerHTML = secs.map(([t, rows, kind]) => `<h4>${t}</h4>` + (kind === 'regs'
+        ? '<div class="regs">' + rows.map(([a, v]) => `<b>${a}</b><span class="v">${siCellHtml(v)}</span>`).join('') + '</div>'
+        : '<table>' + rows.map(([a, v]) => `<tr><td>${esc(a)}</td><td class="v">${siCellHtml(v)}</td></tr>`).join('') + '</table>')).join('');
+      b.scrollTop = top;
+      si.sig = sig; si.cells = [...b.querySelectorAll('.v')]; si.vals = vals; si.builds = (si.builds || 0) + 1;
+      return;
+    }
+    vals.forEach((v, i) => { if (v !== si.vals[i]) { si.vals[i] = v; siLive(si.cells[i], v); } });
+  }
+  // a value on its canvas: the same font and colors, wrapped at spaces to the cell's width
+  function siLive(cell, html) {
+    let cv = cell.firstChild && cell.firstChild.tagName === 'CANVAS' ? cell.firstChild : null;
+    if (!cv) { cell.textContent = ''; cv = document.createElement('canvas'); cv.className = 'sicv'; cell.appendChild(cv); }
+    const dpr = window.devicePixelRatio || 1, cs = getComputedStyle(cell), W = Math.max(20, cell.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight));
+    const key = html + '|' + W + '|' + dpr; if (cv.key === key) return; cv.key = key; cv.html = html;
+    const g = cv.getContext('2d'), font = '12px ui-monospace, Consolas, monospace'; g.font = font;
+    const un = (t) => t.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+    const segs = []; html.split(/(<span class="dim">.*?<\/span>)/).forEach((p) => { if (!p) return; const m = /^<span class="dim">(.*)<\/span>$/.exec(p); segs.push([un((m ? m[1] : p).replace(/<[^>]+>/g, '')), !!m]); });
+    const lines = [[]]; let x = 0;
+    for (const [t, dim] of segs) for (const w of t.match(/[^ ]+ *| +/g) || []) {
+      const ww = g.measureText(w).width;
+      if (x + ww > W && x > 0 && w.trim()) { lines.push([]); x = 0; }
+      lines[lines.length - 1].push([w, dim, x]); x += ww;
+    }
+    const lh = 16, H = lines.length * lh;
+    if (cv.style.height !== H + 'px') cv.style.height = H + 'px';
+    const pw = Math.max(1, Math.round(W * dpr)), ph = Math.round(H * dpr);
+    if (cv.width !== pw || cv.height !== ph) { cv.width = pw; cv.height = ph; }
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H); g.font = font; g.textBaseline = 'middle';
+    const col = cs.color, dimc = getComputedStyle(document.documentElement).getPropertyValue('--dim').trim() || '#888';
+    lines.forEach((ln, i) => ln.forEach(([w, dim, wx]) => { g.fillStyle = dim ? dimc : col; g.fillText(w, wx, i * lh + lh / 2 + 0.5); }));
+  }
+  function siText() {
+    return siSections().map(([t, rows, kind]) => '[' + t + ']\n' + (kind === 'regs' ? rows.map(([a, v]) => a + '=' + v).join(' ') : rows.map(([a, v]) => a.padEnd(16) + String(v).replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&amp;/g, '&')).join('\n'))).join('\n\n');
+  }
+  function showSysInfo(v) {
+    const w = $('sysinfo');
+    w.hidden = !v; $('sibtn').classList.toggle('on', v);
+    clearInterval(siTimer);
+    if (v) {
+      siFW.place(); siRender(); siTimer = setInterval(siRender, 500); w.focus({ preventScroll: true });
+      if (window.ResizeObserver && !si.ro) { si.ro = new ResizeObserver(() => si.cells.forEach((c) => { if (c.firstChild && c.firstChild.tagName === 'CANVAS') siLive(c, c.firstChild.html); })); si.ro.observe($('sibody')); }
+    } else canvas.focus();
+  }
+  function bindSysInfo() {
+    siFW = floatWin($('sysinfo'), 'sysinfopos', () => {
+      const r = $('screenwrap').getBoundingClientRect(), w = $('sysinfo').offsetWidth, vw = document.documentElement.clientWidth;
+      return { x: Math.max(4, Math.min(r.right - w - 8, vw - w - 4)), y: Math.max(8, r.top + 8) };
+    });
+    $('sibtn').onclick = () => { toolsMenu(false); showSysInfo($('sysinfo').hidden); };
+    $('siclose').onclick = () => showSysInfo(false);
+    $('sicopy').onclick = async () => {
+      const t = siText();
+      try { await navigator.clipboard.writeText(t); toast('System info copied'); }
+      catch (e) { downloadBytes('sysinfo.txt', new TextEncoder().encode(t)); }
+    };
+    $('sysinfo').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); showSysInfo(false); } });
+  }
+
+  // ------------------------------------------------------------------ Performance (Tools): live graphs of the machine's load
+  // (from the Unreal Speccy web port). CPU: where the code runs and the part of the time out of WAIT; Host: browser time
+  // spent emulating; Memory: RAM pages written; Disk: frames with drive activity; I/O: register accesses per frame;
+  // Frames: emulated frames per second. Values and lines are drawn on canvases (no text written into the page).
+  const PF_N = 60, PF_DT = 500; // 60 samples, 2 a second (30 s)
+  const pf = { host: 0, frames: 0, disk: 0, diskW: 0, sums: null, t: 0, timer: null, tiles: {} };
+  const PF_TILES = [
+    { id: 'cpu', name: 'CPU code at', color: '#f0a050', max: 100 },
+    { id: 'host', name: 'Host', color: '#5aa9ff', max: 100 },
+    { id: 'mem', name: 'Memory', color: '#c084fc', max: 100 },
+    { id: 'disk', name: 'Disk', color: '#4ade80', max: 100 },
+    { id: 'io', name: 'I/O', color: '#22d3ee', max: 0 },
+    { id: 'fps', name: 'Frames', color: '#facc15', max: 0, limit: 55 },
+  ];
+  function pfBuild() {
+    const g = $('pfgrid'); g.innerHTML = '';
+    for (const t of PF_TILES) {
+      const el = document.createElement('div'); el.className = 'pft';
+      el.innerHTML = `<div class="h"><span>${t.name}</span><canvas class="pv"></canvas></div><canvas class="pg"></canvas><canvas class="ps"></canvas>`;
+      g.appendChild(el);
+      pf.tiles[t.id] = { def: t, el, val: el.querySelector('.pv'), sub: el.querySelector('.ps'), cv: el.querySelector('.pg'), data: [] };
+      pfText(pf.tiles[t.id].val, '—', PF_VFONT, t.color, 'right');
+    }
+    if (window.ResizeObserver && !pf.ro) {
+      pf.ro = new ResizeObserver(() => { for (const id in pf.tiles) { const t = pf.tiles[id]; for (const c of [t.val, t.sub]) if (c.txt) { c.key = ''; pfText(c, c.txt.text, c.txt.font, c.txt.color, c.txt.align); } } });
+      pf.ro.observe(g);
+    }
+  }
+  const PF_VFONT = '600 13px ui-monospace, Consolas, monospace', PF_SFONT = '10.5px ui-monospace, Consolas, monospace';
+  function pfText(cv, text, font, color, align) {
+    const dpr = window.devicePixelRatio || 1, w = Math.max(1, Math.round(cv.clientWidth * dpr)), h = Math.max(1, Math.round(cv.clientHeight * dpr));
+    const key = [text, font, color, w, h].join('|');
+    cv.txt = { text, font, color, align };
+    if (cv.key === key) return;
+    cv.key = key;
+    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+    const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+    g.font = font; g.fillStyle = color; g.textBaseline = 'middle';
+    const cw = w / dpr; let s = String(text);
+    if (g.measureText(s).width > cw) { while (s.length > 1 && g.measureText(s + '…').width > cw) s = s.slice(0, -1); s += '…'; }
+    g.textAlign = align === 'right' ? 'right' : 'left';
+    g.fillText(s, align === 'right' ? cw : 0, h / dpr / 2 + 0.5);
+  }
+  function pfCanvas(cv) {
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.max(1, Math.round(cv.clientWidth * dpr)), h = Math.max(1, Math.round(cv.clientHeight * dpr));
+    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+    const g = cv.getContext('2d'); g.clearRect(0, 0, w, h);
+    return { g, w, h, dpr };
+  }
+  // memory: one cell per 16K page, lit when written (fades out over a few seconds), pages mapped now outlined
+  function pfMemMap(tile, heat, mapped) {
+    const { g, w, h, dpr } = pfCanvas(tile.cv), n = heat.length;
+    const cols = n <= 8 ? 8 : n <= 64 ? 16 : 32, rows = Math.ceil(n / cols), gap = Math.max(1, Math.round(dpr));
+    const cw = (w - gap * (cols - 1)) / cols, ch = Math.min((h - gap * (rows - 1)) / rows, cw * 1.6);
+    const y0 = (h - (ch * rows + gap * (rows - 1))) / 2;
+    for (let p = 0; p < n; p++) {
+      const x = (p % cols) * (cw + gap), y = y0 + Math.floor(p / cols) * (ch + gap), v = heat[p];
+      g.fillStyle = v > 0.02 ? `rgba(192,132,252,${(0.18 + 0.82 * v).toFixed(3)})` : 'rgba(255,255,255,.06)';
+      g.fillRect(x, y, cw, ch);
+      if (mapped.has(p)) { g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = gap; g.strokeRect(x + gap / 2, y + gap / 2, cw - gap, ch - gap); }
+    }
+  }
+  // CPU: where the code runs in the 64K address space — 4 rows (16K: 000000, 040000, 100000, 140000) × 16 cells of 1K;
+  // a row is signed with its RAM page (P0..P7) or ROM
+  function pfCpuMap(tile, heat, rows) {
+    const { g, w, h, dpr } = pfCanvas(tile.cv), lw = Math.round(26 * dpr), gap = Math.max(1, Math.round(dpr));
+    const cw = (w - lw - gap * 15) / 16, ch = (h - gap * 3) / 4;
+    g.font = `${Math.round(9 * dpr)}px ui-monospace, Consolas, monospace`; g.textBaseline = 'middle';
+    for (let r = 0; r < 4; r++) {
+      const y = r * (ch + gap);
+      g.fillStyle = rows[r] < 0 ? 'rgba(240,160,80,.75)' : 'rgba(225,232,240,.55)';
+      g.fillText(rows[r] < 0 ? 'ROM' : 'P' + rows[r], 0, y + ch / 2);
+      for (let c = 0; c < 16; c++) {
+        const v = heat[r * 16 + c], x = lw + c * (cw + gap);
+        g.fillStyle = v > 0.02 ? `rgba(240,160,80,${(0.15 + 0.85 * v).toFixed(3)})` : 'rgba(255,255,255,.05)';
+        g.fillRect(x, y, cw, ch);
+      }
+    }
+  }
+  function pfDraw(tile) {
+    const { cv, data, def } = tile;
+    const { g, w, h, dpr } = pfCanvas(cv);
+    g.strokeStyle = 'rgba(255,255,255,.06)'; g.lineWidth = 1;
+    for (let i = 1; i < 4; i++) { const y = Math.round(h * i / 4) + .5; g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+    const max = def.max || Math.max(def.limit ? def.limit * 1.25 : 8, ...data) * 1.15;
+    if (data.length < 2) return;
+    const x = (i) => w - (data.length - 1 - i) * (w / (PF_N - 1)), y = (v) => h - 1 - Math.min(1, v / max) * (h - 3);
+    const paint = (color, clip) => {
+      g.save();
+      if (clip) { g.beginPath(); g.rect(0, clip[0], w, clip[1] - clip[0]); g.clip(); }
+      g.beginPath(); g.moveTo(x(0), h); data.forEach((v, i) => g.lineTo(x(i), y(v))); g.lineTo(x(data.length - 1), h); g.closePath();
+      const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, color + '55'); gr.addColorStop(1, color + '08');
+      g.fillStyle = gr; g.fill();
+      g.beginPath(); data.forEach((v, i) => (i ? g.lineTo(x(i), y(v)) : g.moveTo(x(i), y(v))));
+      g.strokeStyle = color; g.lineWidth = 1.5 * dpr; g.lineJoin = 'round'; g.stroke();
+      g.restore();
+    };
+    if (def.limit) {
+      const yl = y(def.limit);
+      paint(def.color, [yl, h]); paint('#f05252', [0, yl]);
+      g.strokeStyle = 'rgba(240,82,82,.35)'; g.setLineDash([3 * dpr, 3 * dpr]); g.lineWidth = dpr;
+      g.beginPath(); g.moveTo(0, Math.round(yl) + .5); g.lineTo(w, Math.round(yl) + .5); g.stroke(); g.setLineDash([]);
+    } else paint(def.color);
+  }
+  function pfPut(id, v, text, sub, over) {
+    const t = pf.tiles[id]; t.data.push(v); if (t.data.length > PF_N) t.data.shift();
+    pfText(t.val, text, PF_VFONT, over ? '#f05252' : t.def.color, 'right'); pfText(t.sub, sub, PF_SFONT, '#7d8794', 'left');
+    if (id !== 'mem' && id !== 'cpu') pfDraw(t);
+  }
+  function pfFrame(hostMs) { pf.host += hostMs; }
+  function pfDisk() { // per frame: the drive LED (1 read, 2 write)
+    const k = new Uint8Array(E.memory.buffer, E.web_led(), 1)[0];
+    if (k === 1 || k === 2) { pf.disk++; if (k === 2) pf.diskW++; }
+    pf.frames++;
+  }
+  // RAM of the model (the main memory starts with it): BK-0010 32K (+ 32K pages), BK-0011 / 0011M 128K
+  const pfRamSize = () => FAMILY(model) === '10' ? (model === 'BK0010_01_EXT32' ? 0o200000 : 0o100000) : 0o400000;
+  function pfSample() {
+    if (!E) return;
+    const now = performance.now(), dt = pf.t ? now - pf.t : PF_DT; pf.t = now;
+    const r = new Uint32Array(E.memory.buffer, E.web_perf(), 6 + 256 + 64);
+    const frames = pf.frames, busy = r[0] ? 100 - r[1] * 100 / r[0] : 0;
+    const code = r[4] + r[5], rom = code ? r[4] * 100 / code : 0;
+    if (!pf.zheat) pf.zheat = new Float32Array(64);
+    let hmax = 0, hk = -1; for (let k = 0; k < 64; k++) if (r[262 + k] > hmax) { hmax = r[262 + k]; hk = k; }
+    for (let k = 0; k < 64; k++) pf.zheat[k] = Math.max(pf.zheat[k] * 0.55, hmax ? Math.sqrt(r[262 + k] / hmax) : 0);
+    const bank = (b) => { const v = E.web_memmap(b); return (v >>> 31) ? Math.floor((v & 0x3FFFFFFF) / 0o40000) : -1; }; // writable: RAM page
+    const rows = [0, 1, 2, 3].map((q) => bank(q * 4));
+    pfPut('cpu', rom, hk >= 0 ? o6(hk << 10) : '—',
+      !r[0] ? (isPaused() ? 'paused' : 'stopped') : 'ROM ' + Math.round(rom) + '% · RAM ' + Math.round(100 - rom) + '% · busy ' + Math.round(busy) + '%');
+    pfCpuMap(pf.tiles.cpu, pf.zheat, rows);
+    const host = pf.host / dt * 100;
+    pfPut('host', host, Math.round(host) + '%', frames ? (pf.host / frames).toFixed(2) + ' ms / frame' : 'idle');
+    // RAM: pages (16K) whose contents changed since the last sample (a quick hash of every third word)
+    const n = pfRamSize(), ram = new Int32Array(E.memory.buffer, E.web_mem(), n >> 2), pages = n >> 14;
+    if (!pf.sums || pf.sums.length !== pages) { pf.sums = new Int32Array(pages); pf.heat = new Float32Array(pages); }
+    let changed = 0;
+    for (let p = 0; p < pages; p++) {
+      let h = 0; const o = p << 12;
+      for (let i = 0; i < 4096; i += 3) h = (h * 31 + ram[o + i]) | 0;
+      pf.heat[p] *= 0.7;
+      if (h !== pf.sums[p]) { changed++; pf.sums[p] = h; pf.heat[p] = 1; }
+    }
+    const mapped = new Set(); for (let b = 0; b < 16; b++) { const pg = bank(b); if (pg >= 0 && pg < pages) mapped.add(pg); }
+    pfPut('mem', changed * 100 / pages, changed + ' / ' + pages, 'pages written · ' + (n >> 10) + ' KB');
+    pfMemMap(pf.tiles.mem, pf.heat, mapped);
+    const disk = frames ? pf.disk * 100 / frames : 0;
+    pfPut('disk', disk, Math.round(disk) + '%', !hasFdd(model) ? 'no controller' : pf.disk ? (pf.diskW ? 'writing' : 'reading') + ' · ' + pf.disk + ' frames' : 'idle');
+    const io = frames ? (r[2] + r[3]) / frames : 0;
+    pfPut('io', io, Math.round(io) + '/f', frames ? 'read ' + Math.round(r[2] / frames) + ' · write ' + Math.round(r[3] / frames) + ' per frame' : 'idle');
+    const fps = frames * 1000 / dt;
+    pfPut('fps', fps, Math.round(fps), fps > 55 ? 'frames / s · faster than real time' : 'frames / s · target 50', fps > 55);
+    pf.host = 0; pf.frames = 0; pf.disk = 0; pf.diskW = 0;
+    if (pf.state !== model) { pf.state = model; $('pfstate').textContent = MODELS[model].name; } // only when the model changes
+  }
+  let pfFW = null, pfHelpFW = null;
+  // the help opens at the Performance window's side (right, or left when there is no room) with the same height
+  function pfHelp(v) {
+    const h = $('pfhelp'), w = $('perfwin');
+    if (!pfHelpFW) pfHelpFW = floatWin(h, 'pfhelppos', () => ({ x: 0, y: 0 }));
+    h.hidden = !v; $('pfhelpbtn').classList.toggle('on', v);
+    if (!v) return;
+    const r = w.getBoundingClientRect();
+    h.style.height = r.height + 'px'; pfHelpFW.setPos(snapRight(r, h));
+  }
+  function showPerf(v) {
+    $('perfwin').hidden = !v; $('pfbtn').classList.toggle('on', v);
+    if (!v) pfHelp(false);
+    clearInterval(pf.timer); pf.timer = null;
+    if (v) {
+      if (!pf.tiles.cpu) pfBuild();
+      pfFW.place(); if (E) E.web_perf(); pf.t = performance.now(); pf.host = pf.frames = pf.disk = pf.diskW = 0;
+      pf.timer = setInterval(pfSample, PF_DT); $('perfwin').focus({ preventScroll: true });
+    } else canvas.focus();
+  }
+  function bindPerf() {
+    pfFW = floatWin($('perfwin'), 'perfpos', () => {
+      const r = $('screenwrap').getBoundingClientRect(), w = $('perfwin').offsetWidth, vw = document.documentElement.clientWidth;
+      return { x: Math.max(4, Math.min(r.right - w - 8, vw - w - 4)), y: Math.max(8, r.top + 8) };
+    });
+    $('pfbtn').onclick = () => { toolsMenu(false); showPerf($('perfwin').hidden); };
+    $('pfclose').onclick = () => showPerf(false);
+    $('pfhelpbtn').onclick = (e) => { e.stopPropagation(); pfHelp($('pfhelp').hidden); };
+    $('pfhelpclose').onclick = () => pfHelp(false);
+    $('perfwin').addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); showPerf(false); } });
+  }
+
+  // ------------------------------------------------------------------ Text: paste into the BK
+  // Paste (Ctrl / Cmd+V on the BK screen, or Type into BK of the Text window): the text is typed as from the keyboard
+  // (line end = ВВОД, Russian letters switch РУС / ЛАТ), at max speed while it is typed.
+  let typing = null, txtFW = null;
+  function typeText(text) {
+    if (!E || switching) return false;
+    const t = text.replace(/\r\n?/g, '\n').replace(/ /g, ' ');
+    if (!t.trim()) return false;
+    const data = toCp1251(new TextEncoder().encode(t));
+    const p = E.malloc(data.length + 1); new Uint8Array(E.memory.buffer).set(data, p);
+    E.web_script_start(p, data.length, 5, -1); E.free(p); // -1: '|' is a character here
+    if (userPaused) setUserPaused(false);
+    typing = { turbo: !turbo, n: t.length }; if (!turbo) toggleTurbo();
+    toast('Typing ' + t.length + ' characters…'); txtUI();
+    return true;
+  }
+  function stopTyping() { if (!typing) return; E.web_script_stop(); typingDone(); }
+  function typingDone() { if (typing && typing.turbo && turbo) toggleTurbo(); typing = null; txtUI(); }
+  function txtInfo(t, err) { $('txtinfo').textContent = t || ''; $('txtinfo').classList.toggle('err', !!err); }
+  function txtUI() {
+    $('txttype').textContent = typing ? 'Stop typing' : 'Type into BK';
+  }
+  function typingTick() { // main loop, while typing: the end of the text
+    if (!typing) return;
+    if (E.web_script_left() === 0) { const n = typing.n; typingDone(); toast('Typed ' + n + ' characters'); txtInfo('Typed ' + n + ' characters'); }
+  }
+  function showText(v) {
+    const w = $('txtwin');
+    w.hidden = !v; $('txtbtn').classList.toggle('on', v);
+    if (v) { txtFW.place(); $('txtarea').focus(); } else canvas.focus();
+  }
+  function bindText() {
+    txtFW = floatWin($('txtwin'), 'txtpos', () => {
+      const r = $('screenwrap').getBoundingClientRect(), w = $('txtwin').offsetWidth, vw = document.documentElement.clientWidth;
+      return { x: Math.max(4, Math.min(r.right - w - 8, vw - w - 4)), y: Math.max(8, r.top + 30) };
+    });
+    $('txtbtn').onclick = () => { toolsMenu(false); showText($('txtwin').hidden); };
+    $('txtclose').onclick = () => showText(false);
+    $('txttype').onclick = () => {
+      if (typing) { stopTyping(); txtInfo('Stopped'); return; }
+      if (typeText($('txtarea').value)) { txtInfo('Typing into BK…'); activateWin(scrWin); canvas.focus(); }
+      else txtInfo('Nothing to type', true);
+    };
+    $('txtcopy').onclick = async () => {
+      const t = $('txtarea').value;
+      try { await navigator.clipboard.writeText(t); txtInfo('Copied to clipboard'); }
+      catch (e) { $('txtarea').select(); txtInfo('Selected: copy it (Ctrl / Cmd+C)'); }
+    };
+    $('txtsave').onclick = () => downloadBytes('bk_text.txt', new TextEncoder().encode($('txtarea').value));
+    $('txtclear').onclick = () => { $('txtarea').value = ''; txtInfo(''); $('txtarea').focus(); };
+    $('txtwin').addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Escape') { e.preventDefault(); showText(false); } });
+    // Ctrl / Cmd+V on the BK screen: the text of the clipboard is typed into the BK
+    document.addEventListener('paste', (e) => {
+      if (actWin !== scrWin || !E) return;
+      const t = e.clipboardData && e.clipboardData.getData('text');
+      if (t) { e.preventDefault(); typeText(t); }
+    });
+  }
+
+  // ------------------------------------------------------------------ REST API: index.html?model=bk0011mfdd&fdd=a:img/disks.zip/WRKANDOS.IMG&autorun=1
+  // (from the Unreal Speccy web port). Parameters may also follow '#'. Keys and values are case-insensitive (file paths keep
+  // their case, folders on the site are lower case). A file inside a zip of the site: path/set.zip/NAME.EXT.
+  // What a link sets is for this visit only: nothing of it is stored in the visitor's settings.
+  const LINK_NAME = {}, MODEL_ALIASES = {};
+  for (const k of Object.keys(MODELS)) {
+    const n = k.toLowerCase().replace('_01', '').replace(/_/g, ''); // BK0010_01_FDD → bk0010fdd, BK0011M_SMK → bk0011msmk
+    LINK_NAME[k] = n;
+    for (const a of [n, n.replace(/^bk00/, 'bk'), n.replace('fdd', 'kngmd'), n.replace(/^bk00/, 'bk').replace('fdd', 'kngmd')]) MODEL_ALIASES[a] = k;
+  }
+  // one parameter into the link's keys: fdd=a:path … d:path (no drive: A:) → a … d; hdd0= → hdd, hdd1=
+  function linkPut(o, k, v) {
+    k = k.toLowerCase();
+    if (k === 'fdd') { const m = /^([a-d]):(.*)$/i.exec(v); if (m) o[m[1].toLowerCase()] = m[2]; else o.a = v; return; }
+    o[k === 'hdd0' ? 'hdd' : k] = v;
+  }
+  function linkParse(q) { const o = {}; for (const [k, v] of new URLSearchParams(String(q).replace(/^[^?]*\?/, ''))) linkPut(o, k, v); return o; }
+  function linkParams() {
+    const out = {};
+    const add = (q) => { for (const [k, v] of new URLSearchParams(q)) linkPut(out, k, v); };
+    add(location.search);
+    if (location.hash.length > 1 && location.hash.includes('=')) add(location.hash.slice(1));
+    return out;
+  }
+  let LINK = linkParams();
+  const yes = (v) => v !== undefined && !/^(0|no|off|false)$/i.test(v);
+  const linkModelKey = (v) => v ? MODEL_ALIASES[String(v).toLowerCase().replace(/[\s_+-]/g, '')] || Object.keys(MODELS).find((k) => k.toLowerCase() === String(v).toLowerCase()) : null;
+  // before the first start: the model (so only its ROMs are downloaded); a link with an HDD image and no model: BK-0011M + SMK-512
+  function linkModel() {
+    if (LINK.model) {
+      const m = linkModelKey(LINK.model);
+      if (m) model = m; else toast('Link: unknown model "' + LINK.model + '" (' + Object.values(LINK_NAME).join(', ') + ')', true);
+    } else if ((LINK.hdd || LINK.hdd1) && !hasHdd(model)) model = 'BK0011M_SMK';
+  }
+  // folders on the site are lower case; the file's name keeps its case
+  const lowDir = (u) => /^[a-z][a-z0-9+.-]*:|^\/\//i.test(u) ? u : u.replace(/^(.*\/)/, (d) => d.toLowerCase());
+  // a file of the site (or of another site that allows it: CORS); "set.zip/NAME" is a file inside a zip
+  async function linkFetch(path) {
+    const m = /^(.*?\.zip)\/(.+)$/i.exec(path);
+    const url = new URL(lowDir(m ? m[1] : path), location.href).href;
+    const data = await fetchBytes(url);
+    if (!m) return { name: decodeURIComponent(url.replace(/^.*\//, '')), data, url };
+    const set = await zipSet(url.replace(/^.*\//, ''), data); set.url = url;
+    const want = m[2].toUpperCase().replace(/\\/g, '/'), f = set.files.find((x) => x.path === want) || set.files.find((x) => x.path.replace(/^.*\//, '') === want);
+    if (!f) throw new Error(m[2] + ' not found in ' + url.replace(/^.*\//, ''));
+    return { name: f.path.replace(/^.*\//, ''), data: f.data, url: url + '/' + f.path, set, file: f };
+  }
+  // after the start: clock, sound, keyboard, then the files (each error is a toast, the rest goes on), then the start
+  async function linkApply() {
+    const L = LINK; if (!Object.keys(L).length) return;
+    if (L.speed) { // 2, 2x or 6mhz; the nearest step of the clock slider, not saved
+      const v = parseFloat(L.speed), base = E.web_base_freq() / 1e6 || 3, x = /mhz/i.test(L.speed) ? v / base : v;
+      if (isFinite(x) && x > 0) { let best = 0; SPEEDS.forEach((sp, i) => { if (Math.abs(sp - x) < Math.abs(SPEEDS[best] - x)) best = i; }); setSpeed(best, false); speedUI(); }
+    }
+    if (L.mute !== undefined && yes(L.mute)) { muted = true; if (audio) audio.gain.gain.value = 0; updateSoundBtn(); }
+    if (L.kbd !== undefined) linkKbd(String(L.kbd).toLowerCase());
+    const auto = (L.autorun !== undefined && yes(L.autorun)) || L.run !== undefined;
+    const err = (p, e) => toast('Link: ' + p.replace(/^.*\//, '') + ': ' + e.message, true);
+    // HDD images (SMK-512): master, slave
+    for (const [key, i] of [['hdd', 4], ['hdd1', 5]]) {
+      if (!L[key]) continue;
+      try { const f = await linkFetch(L[key]); await mountTo(i, f.name.toUpperCase(), f.data, hasHdd(model) ? model : 'BK0011M_SMK', i === 4 && auto && !L.a, f.url); }
+      catch (e) { err(L[key], e); }
+    }
+    // floppies: B: .. D: first, A: last (with autorun it boots)
+    for (const d of ['b', 'c', 'd', 'a']) {
+      if (!L[d]) continue;
+      try {
+        const f = await linkFetch(L[d]), nm = f.name.toUpperCase(), P = diskProfile(nm, f.data), i = 'abcd'.indexOf(d);
+        const boot = i === 0 && auto && !!P.boot && L.run === undefined;
+        const target = boot ? P.boot : hasFdd(model) ? model : (P.boot || FDD_MODELS[FAMILY(model)][0]);
+        await mountTo(i, nm, f.data, target, boot, f.url);
+      } catch (e) { err(L[d], e); }
+    }
+    if (L.snap) { try { const f = await linkFetch(L.snap); await loadState(f.name.toUpperCase(), f.data); } catch (e) { err(L.snap, e); } }
+    if (L.tape) {
+      try {
+        const zip = /\.zip$/i.test(L.tape);
+        if (zip) { // a set of .bin files: File Commander shows it, run= starts its file (overlays come from it)
+          const url = new URL(lowDir(L.tape), location.href).href, set = await zipSet(url.replace(/^.*\//, ''), await fetchBytes(url)); set.url = url;
+          const s = SETS.find((x) => x.url === url); if (s) s.set = set; else fc.addSet(set);
+          if (L.run) {
+            const want = L.run.toUpperCase(), f = set.files.find((x) => x.path === want || x.path.replace(/^.*\//, '') === want || x.path.replace(/^.*\//, '').replace(/\.BIN$/, '') === want);
+            if (!f) throw new Error(L.run + ' not found');
+            const r = runFile(BKFC.setVolume(set, 'ZIP'), f, false); if (r) throw new Error(r);
+          }
+        } else {
+          const f = await linkFetch(L.tape), nm = f.name.toUpperCase();
+          if (isTape(nm)) await playTape(nm, f.data, async (o) => (o.buttons[0] === 'Load' && !auto ? 1 : 0), f.url);
+          else if (/\.BIN$/.test(nm)) {
+            const vol = f.set ? BKFC.setVolume(f.set, 'ZIP') : BKFC.setVolume({ name: 'RAM', files: ramFiles }, 'RAM'), file = f.file || { path: nm, data: f.data };
+            if (!f.set) { const k = ramFiles.findIndex((x) => x.path === nm); if (k >= 0) ramFiles.splice(k, 1); ramFiles.push(file); }
+            if (auto) { const r = runFile(vol, file, false); if (r) throw new Error(r); } else toast(nm + ' → RAM (File Commander)');
+          } else throw new Error('tape: .tap, .wav, .bin or a zip of .bin files');
+        }
+      } catch (e) { err(L.tape, e); }
+    }
+    if (L.script) { try { const f = await linkFetch(L.script); runScript(f.name.toUpperCase(), f.data); } catch (e) { err(L.script, e); } }
+  }
+  // kbd=bk|xt|joy|off: the on-screen keyboard for this visit (the visitor's setting stays)
+  function linkKbd(v) {
+    const panel = $('vkbd');
+    if (v === 'off' || v === '0' || v === 'no') { panel.hidden = true; $('kbdtype').hidden = true; $('kbdbtn').classList.remove('on'); applyScale(); return; }
+    if (!['bk', 'xt', 'joy'].includes(v)) { toast('Link: kbd= bk, xt, joy or off', true); return; }
+    panel.hidden = false; $('kbdtype').hidden = false; $('kbdbtn').classList.add('on'); vkbd.show(v); $('kbdtype').value = v; applyScale();
+  }
+  // a server-list entry with "run" ("?model=...&fdd=a:..."): a link started on this page
+  async function runLink(q) {
+    const p = linkParse(q);
+    const want = linkModelKey(p.model);
+    if (p.model && !want) { toast('Link: unknown model "' + p.model + '"', true); return; }
+    LINK = p;
+    try {
+      if (want && want !== model) await setModel(want, true);
+      await linkApply();
+    } finally { LINK = {}; }
+  }
+
+  // ------------------------------------------------------------------ REST API link builder (Tools): the link for the current machine, to copy
+  let raFW = null, raHelpFW = null;
+  const pageDir = () => location.href.replace(/[?#].*$/, '').replace(/[^/]*$/, '');
+  function relUrl(u) { // a file on this site → its path next to index.html
+    try { const x = new URL(u, location.href), d = pageDir(); return x.href.startsWith(d) ? decodeURI(x.href.slice(d.length)) : x.href; } catch (e) { return u; }
+  }
+  const linkEnc = (v) => encodeURIComponent(v).replace(/%2F/gi, '/').replace(/%3A/gi, ':').replace(/%7C/gi, '|');
+  function raBuild() {
+    const on = (k) => $('ra_' + k).checked, q = [];
+    if (on('model')) q.push('model=' + $('rav_model').value);
+    if (on('speed')) q.push('speed=' + $('rav_speed').value);
+    if (on('a') && $('rav_a').value.trim()) q.push('fdd=' + $('rav_fdrv').value + ':' + linkEnc($('rav_a').value.trim()));
+    if (on('hdd') && $('rav_hdd').value.trim()) q.push('hdd' + $('rav_hdrv').value + '=' + linkEnc($('rav_hdd').value.trim()));
+    if (on('tape') && $('rav_tape').value.trim()) q.push('tape=' + linkEnc($('rav_tape').value.trim()));
+    if (on('snap') && $('rav_snap').value.trim()) q.push('snap=' + linkEnc($('rav_snap').value.trim()));
+    if (on('script') && $('rav_script').value.trim()) q.push('script=' + linkEnc($('rav_script').value.trim()));
+    const st = $('rav_start').value;
+    $('ral_run').hidden = $('rav_run').hidden = st !== 'run';
+    if (st === 'autorun') q.push('autorun=1');
+    if (st === 'run') q.push('run=' + linkEnc($('rav_run').value.trim()));
+    if (on('mute')) q.push('mute=1');
+    if (on('kbd')) q.push('kbd=' + $('rav_kbd').value);
+    $('raout').value = location.href.replace(/[?#].*$/, '') + (q.length ? '?' + q.join('&') : '');
+    const notes = [];
+    const mk = linkModelKey($('rav_model').value);
+    if (on('hdd') && $('rav_hdd').value.trim() && on('model') && mk && !hasHdd(mk)) notes.push('hdd needs a model with SMK-512');
+    if (st === 'run' && !(on('tape') && /\.zip$/i.test($('rav_tape').value.trim()))) notes.push('run= starts a .bin of the zip in tape=');
+    if (st === 'run' && !$('rav_run').value.trim()) notes.push('run=: put the file name');
+    if (st === 'autorun' && !(on('a') && $('rav_fdrv').value === 'a') && !on('tape') && !on('hdd')) notes.push('autorun: a disk in A:, HDD or tape');
+    $('ranote').textContent = notes.join('; ');
+  }
+  // the lists of files of the site: the server sets (img/list.json), loaded when the window opens
+  async function raFiles() {
+    const fill = (id, list) => { const dl = $(id); dl.innerHTML = ''; for (const [v, t] of list) { const o = document.createElement('option'); o.value = v; o.label = t; o.textContent = t; dl.appendChild(o); } };
+    const disks = [], hdds = [], tapes = [], snaps = [], scripts = [];
+    for (const s of SETS) {
+      let set = s.set; if (!set) { try { set = await loadSet(s); } catch (e) { continue; } }
+      for (const f of set.files) {
+        const v = relUrl(s.url) + '/' + f.path, nm = f.path;
+        if (/\.HDI$/.test(nm)) hdds.push([v, nm]); else if (isImage(nm)) disks.push([v, nm]);
+        else if (/\.(TAP|WAV|BIN)$/.test(nm)) tapes.push([v, nm]); else if (/\.MSF$/.test(nm)) snaps.push([v, nm]); else if (/\.BKSCRIPT$/.test(nm)) scripts.push([v, nm]);
+      }
+      if (set.files.some((f) => /\.BIN$/.test(f.path))) tapes.unshift([relUrl(s.url), s.name + ' (set, with run=)']);
+    }
+    for (const [g, list] of [['states', snaps]]) for (const it of serverList[g] || []) if (!/\.zip$/i.test(it.url)) list.push([relUrl(it.url), it.name]);
+    fill('ra_disks', disks); fill('ra_hdds', hdds); fill('ra_tapes', tapes); fill('ra_snaps', snaps); fill('ra_scripts', scripts);
+  }
+  function raFill() {
+    const ms = $('rav_model');
+    if (!ms.options.length) for (const [k, v] of Object.entries(LINK_NAME)) { const o = document.createElement('option'); o.value = v; o.textContent = v + ' — ' + MODELS[k].name; ms.appendChild(o); }
+    ms.value = LINK_NAME[model];
+    const sp = $('rav_speed');
+    if (!sp.options.length) SPEEDS.forEach((x) => { const o = document.createElement('option'); o.value = String(x); o.textContent = x + 'x'; sp.appendChild(o); });
+    sp.value = String(SPEEDS[speedIdx]); $('ra_speed').checked = SPEEDS[speedIdx] !== 1;
+    // the disk in A: (or the first drive with a disk from the site)
+    let fd = -1; for (let i = 0; i < 4; i++) if (drives[i] && drives[i].url) { fd = i; break; }
+    $('rav_fdrv').value = fd > 0 ? 'abcd'[fd] : 'a'; $('rav_a').value = fd >= 0 ? relUrl(drives[fd].url) : ''; $('ra_a').checked = fd >= 0;
+    const hd = drives[4] && drives[4].url ? 4 : drives[5] && drives[5].url ? 5 : -1;
+    $('rav_hdrv').value = hd === 5 ? '1' : '0'; $('rav_hdd').value = hd >= 0 ? relUrl(drives[hd].url) : ''; $('ra_hdd').checked = hd >= 0;
+    const tu = runUrl || tapeUrl; // the .bin started from a set: tape=set.zip & run=NAME
+    if (runUrl) { const m = /^(.*\.zip)\/(.+)$/i.exec(relUrl(runUrl)); $('rav_tape').value = m ? m[1] : relUrl(runUrl); $('rav_run').value = m ? m[2].replace(/^.*\//, '') : ''; }
+    else $('rav_tape').value = tu ? relUrl(tu) : '';
+    $('ra_tape').checked = !!tu;
+    $('rav_start').value = runUrl && /\.zip\//i.test(runUrl) ? 'run' : (fd === 0 && drives[0].boot) || tu || hd === 4 ? 'autorun' : '';
+    $('rav_snap').value = ''; $('ra_snap').checked = false; $('rav_script').value = ''; $('ra_script').checked = false;
+    $('ra_mute').checked = muted;
+    $('rav_kbd').value = $('vkbd').hidden ? 'off' : (vkbd && vkbd.tab) || 'bk'; $('ra_kbd').checked = !$('vkbd').hidden;
+    raBuild();
+    raFiles();
+  }
+  function raHelp(v) {
+    const h = $('rahelp'), w = $('restwin');
+    if (!raHelpFW) raHelpFW = floatWin(h, 'rahelppos', () => ({ x: 0, y: 0 }));
+    h.hidden = !v; $('rahelpbtn').classList.toggle('on', v);
+    if (!v) return;
+    const r = w.getBoundingClientRect();
+    h.style.height = Math.max(r.height, 360) + 'px'; raHelpFW.setPos(snapRight(r, h));
+  }
+  function showRest(v) {
+    $('restwin').hidden = !v; $('rabtn').classList.toggle('on', v);
+    if (!v) raHelp(false);
+    if (v) { raFill(); raFW.place(); } else canvas.focus();
+  }
+  function bindRest() {
+    raFW = floatWin($('restwin'), 'restpos', () => {
+      const r = $('screenwrap').getBoundingClientRect(), w = $('restwin').offsetWidth, vw = document.documentElement.clientWidth;
+      return { x: Math.max(4, Math.min(r.left + (r.width - w) / 2, vw - w - 4)), y: Math.max(8, r.top + 40) };
+    });
+    $('rabtn').onclick = () => { toolsMenu(false); showRest($('restwin').hidden); };
+    $('raclose').onclick = () => showRest(false);
+    for (const k of ['a', 'hdd', 'tape', 'snap', 'script']) $('rav_' + k).addEventListener('change', () => { $('ra_' + k).checked = !!$('rav_' + k).value.trim(); });
+    $('rav_kbd').addEventListener('change', () => { $('ra_kbd').checked = true; });
+    $('restwin').addEventListener('input', raBuild); $('restwin').addEventListener('change', raBuild);
+    $('restwin').addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Escape') { e.preventDefault(); showRest(false); } });
+    $('racopy').onclick = async () => {
+      try { await navigator.clipboard.writeText($('raout').value); toast('Link copied'); }
+      catch (e) { $('raout').select(); toast('Link selected — copy it'); }
+    };
+    $('raopen').onclick = () => window.open($('raout').value, '_blank');
+    $('rahelpbtn').onclick = (e) => { e.stopPropagation(); raHelp($('rahelp').hidden); };
+    $('rahelpclose').onclick = () => raHelp(false);
   }
 
   // ------------------------------------------------------------------ Options, Help
@@ -1383,7 +2021,7 @@
     $('toolbar').addEventListener('mousedown', (e) => { if (e.target.closest('button')) e.preventDefault(); });
     document.addEventListener('click', (e) => {
       const b = e.target.closest('button');
-      if (!b || winOf(b) || b.closest('#toolspop, #toolsbtn')) return;
+      if (!b || winOf(b) || b.closest('#toolspop, #toolsbtn, #fcdlg, .pop.menu, .usel-pop')) return; // the questions' buttons: the focus stays where the question put it
       if (b.closest('#toolbar')) { setTimeout(restoreFocus, 0); return; }
       canvas.focus();
     });
@@ -1407,6 +2045,10 @@
     aboutModels();
     bindTools();
     bindLoadSave();
+    bindSysInfo();
+    bindPerf();
+    bindRest();
+    bindText();
     bindWindows();
     bindKeys();
     bindVKbd();
@@ -1444,13 +2086,14 @@
       setTimeout(() => location.reload(), 600);
     } catch (e) {}
   }
-  window.BKDebug = { get E() { return E; }, get fc() { return fc; }, runFile, ramFiles, SETS, get dbg() { return dbg; }, mountImage, playTape, openImageFiles, drives, loadState, saveState, runScript, get audio() { return audio; }, cstr: (p) => cstr(p), fs, setModel, get model() { return model; }, get vkbd() { return vkbd; }, get actWin() { return actWin; } }; // for tests and the console
+  window.BKDebug = { get E() { return E; }, get fc() { return fc; }, runFile, ramFiles, SETS, get dbg() { return dbg; }, mountImage, playTape, openImageFiles, drives, loadState, saveState, runScript, get audio() { return audio; }, cstr: (p) => cstr(p), fs, setModel, get model() { return model; }, get vkbd() { return vkbd; }, get actWin() { return actWin; }, siText: () => siText(), get si() { return si; }, pf, showPerf: (v) => showPerf(v), raOut: () => $('raout').value, showRest: (v) => showRest(v), typeText, get typing() { return typing; } }; // for tests and the console
 
   // ------------------------------------------------------------------ boot
   window.addEventListener('DOMContentLoaded', async () => {
     const m = load('model'); if (m && MODELS[m]) model = m;
     bindUI();
     try {
+      linkModel(); // REST API: model= before the start (only its ROMs are downloaded); not stored
       try { await start(); }
       catch (err) { // the saved model cannot start (its ROMs are missing): the default one
         if (model === 'BK0010_01' || E) throw err;
@@ -1461,6 +2104,7 @@
       applyRunState();
       canvas.focus();
       requestAnimationFrame(tick);
+      linkApply(); // REST API: clock, sound, keyboard, files, start
       checkUpdate();
     } catch (err) {
       let msg = 'Startup error: ' + err.message;

@@ -87,16 +87,13 @@
 
 + File Commander: first button on toolbar, F1 opens / closes it (Tools and Help too)
 + File Commander: help (? in title)
-@ Help, File Commander, Options and changes.txt: texts shortened
 
         version 0.9.0                   8 oct 2026
 
 + oscilloscope at top left of screen while sound plays (Options / Sound)
 + About: models with their description (as in emulator documentation)
 @ models: 12 configurations of documentation (BK-0011 + SMK-512 removed)
-@ window title bars: active #1f252d, inactive #171b21, buttons share bar background
 @ File Commander: no Run and Re-read buttons (Enter, F2 stay; help)
-@ window size note moved from Options to Help
 * iOS / iPad: no selection, callout or context menu on screen, keyboards, joystick
 
         version 0.10.0                  8 oct 2026
@@ -155,7 +152,6 @@
 @ toolbar buttons above screen keep active window and its focus (File Commander keeps
   keys while BK is stopped, sped up, reset ...)
 * Debugger: after Run / Stop buttons F5, F10, F11 ... did not work (focus was lost)
-@ page title: Web BK-0010
 
         version 0.15.0                  11 oct 2026
 
@@ -170,11 +166,9 @@
 
 + File Commander: set bkscript (img/bkscript.zip on server: basic, russian, monitor_load);
   Enter / double click asks Run, script is typed into BK. UTF-8 scripts converted to 1251
-@ File Commander: server sets named games, bkscript (without .zip)
 + System button on toolbar: Options on System tab (model, clock)
 @ Apply of model closes Options
 + touch screens: windows are moved by strip along left edge too
-@ Graph Search, Memory map, Options: Color (not Colour)
 
         version 0.17.0                  12 oct 2026
 
@@ -199,7 +193,6 @@
   while active (arrows, Tab, Enter, Esc, letters); keyboard does not take activation
 @ XT keyboard: row F1 .. F12 (go to page: File Commander, Debugger); Ins .. Num keys
   in second row
-@ File Commander: image kind not in list (shown next to it); long names end with …
 
         version 0.19.0                  13 oct 2026
 
@@ -210,19 +203,65 @@
 @ File Commander dialogs: ← → (Tab) choose answer, Enter takes it (on-screen keys too)
 * File Commander: pick in panel list moves focus to that panel
 
-        version 0.19.1                  13 oct 2026
-
-@ About: version line "v ... by ae485 (e-mail)"; blocks Hardware, Input, Files, Tools,
-  Not yet instead of This version
-
-        version 0.19.2                  13 oct 2026
-
-@ About: Hardware and Input shortened; Joystick, HDD, Joystick panel rows
-
-        version 0.19.3                  13 oct 2026
-
-@ About: Screen and Keyboard rows reworded
-
         version 0.19.4                  22 oct 2026
 
 @ questions (disk image, tape, copy, delete ...): centred on BK window, page dimmed
+
+        version 0.20.0                  23 oct 2026
+
++ Tools → System Info (from Unreal Speccy web port): machine (model, ROM, clock, state,
+  emulated time), CPU (registers, PSW flags, priority, WAIT), memory and video (177716,
+  BK-0011 pages, 177662, scroll 177664, screen mode), storage (controller, drives,
+  HDD, tape), FDD controller registers 177130 / 177132, devices (timer, port 177714,
+  joystick), sound, input, browser; updated twice a second, Copy as text
+
+        version 0.21.0                  23 oct 2026
+
++ Tools → Performance (from Unreal Speccy web port): live graphs for 30 s — CPU code at
+  (64K map by 1K, rows signed with RAM page or ROM, ROM / RAM share, busy = time out of
+  WAIT), Host (browser time per frame), Memory (16K RAM pages written, mapped pages
+  outlined), Disk (frames with drive reading / writing), I/O (register accesses
+  177600–177777 per frame), Frames (above 55 red); help (?). Sampled only while
+  window is open
+
+        version 0.22.0                  23 oct 2026
+
++ REST API (from Unreal Speccy web port): start by link index.html?model=…&speed=…
+  &fdd=a:…&hdd0=…&tape=…&snap=…&script=…&autorun=1&run=…&mute=1&kbd=… (also after #);
+  file inside zip of site: set.zip/NAME; model without controller is switched;
+  autorun: system disk in A: (or HDD) boots, tape loads, .bin starts; run=: .bin of zip
+  set; errors as toasts, rest goes on; nothing of link is stored
++ Tools → REST API link: link for current machine (model, clock, disks and tape from
+  site), files of server sets in lists, Copy, Open; help (?)
++ server list (img/list.json): entry with "run" (REST API link) starts it on this page
+
+        version 0.23.0                  23 oct 2026
+
++ File Commander: Edit (F4) — text or hex editor (offsets octal), encodings as in view,
+  Save (F2, Ctrl+S), Save as (Shift+F2: this panel or other one), Wrap (Alt+W); every
+  byte has its character, file comes back byte for byte
++ File Commander: folders — select, copy (F5) and delete (F8) with their files, MkDir
+  (F7) in RAM and zip sets; selection size counts contents of folders
++ File Commander: sort of each panel (ext / name / size, folders first)
++ File Commander: Files menu — Download Files (folders as zip), Upload Files (zip
+  unpacked with folders), Open zip as set
++ viewer: Wrap (W) for text; encodings Latin-1, UTF-8
+* answer to a question (File Commander, disks): focus went to BK screen
+
+        version 0.24.0                  23 oct 2026
+
++ File Commander help in its own window (button ?): beside File Commander, moved and
+  sized as other windows, Esc closes it
++ paste: Ctrl / Cmd+V on BK screen types text of clipboard into BK (line end = ВВОД,
+  Russian letters with РУС / ЛАТ), at max speed while typing
++ Tools → Text: Type into BK (Stop), From BASIC — Vilnius BASIC program comes as text
+  (BK-0010, at Ok: SAVE "CLIP" is typed, its blocks are caught, nothing is left in RAM),
+  Copy to clipboard, Save as .txt, Clear
+* windows put beside another one stay on screen when there is no room at both sides
+
+        version 0.25.0                  23 oct 2026
+
++ Debugger help in its own window (button ?): beside Debugger, moved and sized as other
+  windows, Esc closes it
+- Tools → Text: From BASIC removed
+* Tools → Text: hint text in empty window wraps (went past right edge of window)

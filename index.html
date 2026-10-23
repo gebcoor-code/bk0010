@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="build" content="20261022140203">
+<meta name="build" content="20261023163756">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" href="icon.png">
@@ -201,12 +201,22 @@ button.ico.wide { width: auto; padding: 0 7px; gap: 4px; font-size: 12px; font-w
 .fcbar button { padding: 1px 5px; font-size: 10px; line-height: 14px; border-radius: 4px; }
 .fcbar kbd { font: 9px ui-monospace, Consolas, monospace; color: var(--dim); margin-left: 2px; }
 .fcbar .sp { flex: 1; }
+.fchead .fcsort { flex: none; height: 20px; padding: 0 2px; font-size: 10px; }
+.fcmenupop { position: absolute; z-index: 6; display: flex; flex-direction: column; min-width: 220px; padding: 4px; background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+.fcmenupop button { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; border: 0; background: transparent; padding: 5px 8px; text-align: left; border-radius: 4px; font-size: 12px; }
+.fcmenupop button:hover { background: var(--panel); }
+.fcmenupop button i { font-style: normal; font-size: 10px; color: var(--dim); }
+.fcbar .fcmenu.open { border-color: var(--accent); }
+#fcdlg .dlgin { display: block; width: 100%; margin-top: 8px; height: 26px; padding: 0 8px; font: 12px ui-monospace, Consolas, monospace; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 5px; }
+
 .fcstat { padding: 2px 10px 3px; font-size: 10px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-top: 1px solid var(--line); }
 .fcstat.err { color: #e07a6a; }
-#fchelp { position: absolute; left: 0; right: 0; top: 28px; bottom: 0; z-index: 2; overflow-y: auto; padding: 6px 12px 10px; background: var(--bg); font-size: 12px; line-height: 1.35; outline: none; }
-#fchelp[hidden] { display: none; }
+#fchelp { width: min(440px, calc(100vw - 8px)); height: min(520px, calc(100vh - 16px)); min-width: 280px; min-height: 200px; z-index: 10; }
+#fchelp:focus { outline: none; }
+#fchelp .hbody { flex: 1; overflow-y: auto; padding: 6px 12px 10px; font-size: 12px; line-height: 1.35; }
 #fchelp h4 { margin: 10px 0 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); }
 #fchelp h4:first-child { margin-top: 2px; }
+#fchelp table.keys td:first-child { white-space: nowrap; vertical-align: top; }
 #fchelpbtn.on { background: var(--accent); color: #1a1208; border-color: var(--accent); }
 #drivelist { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
 .drvrow { display: grid; grid-template-columns: 78px minmax(0, 1fr) auto auto auto; gap: 6px; align-items: center; font-size: 12px; }
@@ -253,8 +263,11 @@ button.ico.wide { width: auto; padding: 0 7px; gap: 4px; font-size: 12px; font-w
 #dbgdump { margin: 0 6px; padding: 3px 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; font: 12px/1.45 ui-monospace, Consolas, monospace; }
 .dm { display: flex; gap: 10px; white-space: pre; } .dm .a { color: var(--dim); } .dm .w { cursor: text; } .dm .t { color: var(--dim); }
 #dbgbps { padding: 3px 10px 4px; font-size: 11px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#dbghelp { padding: 6px 12px; font-size: 12px; border-bottom: 1px solid var(--line); max-height: 40%; overflow: auto; }
-#dbghelp[hidden] { display: none; }
+#dbghelp { width: min(400px, calc(100vw - 8px)); height: min(330px, calc(100vh - 16px)); min-width: 260px; min-height: 160px; z-index: 10; }
+#dbghelp:focus { outline: none; }
+#dbghelp .hbody { flex: 1; overflow-y: auto; padding: 6px 12px 10px; font-size: 12px; line-height: 1.35; }
+#dbghelp table.keys td:first-child { white-space: nowrap; vertical-align: top; }
+#dbghelpbtn.on { background: var(--accent); color: #1a1208; border-color: var(--accent); }
 #mmwin { width: min(560px, calc(100vw - 8px)); max-height: calc(100vh - 16px); }
 .mmbody { display: flex; flex-direction: column; gap: 6px; padding: 6px 8px; overflow: auto; font-size: 12px; }
 #mmtable { border-collapse: collapse; font: 11px ui-monospace, Consolas, monospace; }
@@ -301,13 +314,17 @@ button.ico.wide { width: auto; padding: 0 7px; gap: 4px; font-size: 12px; font-w
 #fvwin .dbghead button { padding: 1px 7px; font-size: 12px; }
 .fvbar { display: flex; gap: 6px; align-items: center; padding: 4px 6px; border-bottom: 1px solid var(--line); font-size: 11px; color: var(--dim); }
 .fvbar select { height: 24px; font-size: 12px; }
+.fvbar .fvwrap { height: 24px; padding: 0 8px; font-size: 12px; }
+.fvbar .fvwrap.on { border-color: var(--accent); color: var(--accent); }
+.fvbar [hidden] { display: none; }
 #fvgo { width: 7ch; height: 24px; padding: 0 4px; font: 12px ui-monospace, Consolas, monospace; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 4px; margin-left: -4px; }
 #fvorg { width: 7ch; height: 24px; padding: 0 4px; font: 12px ui-monospace, Consolas, monospace; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 4px; margin-left: -4px; }
 #fvorg[hidden], #fvorgl[hidden], #fvgo[hidden], #fvgol[hidden] { display: none; }
 #fvimg { display: flex; gap: 10px; align-items: flex-end; padding: 6px 10px; border-bottom: 1px solid var(--line); font-size: 11px; color: var(--dim); }
 #fvimg[hidden] { display: none; }
 #fvimg canvas { width: 200px; height: 150px; image-rendering: auto; border: 1px solid var(--line); }
-#fvbody { flex: 1; min-height: 0; margin: 0; padding: 6px 10px; overflow: auto; outline: none; font: 12px/1.35 ui-monospace, Consolas, monospace; color: var(--text); white-space: pre-wrap; word-break: break-all; tab-size: 8; }
+#fvbody { flex: 1; min-height: 0; margin: 0; padding: 6px 10px; overflow: auto; outline: none; font: 12px/1.35 ui-monospace, Consolas, monospace; color: var(--text); white-space: pre; tab-size: 8; }
+#fvbody.wrap:not(.hex) { white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; } /* by words; a word longer than the line: where it must */
 @media (max-width: 520px) { button.ico { width: 30px; height: 30px; } }
 @media (max-width: 430px) { button.ico { width: 28px; } #toolbar, #toolbar .bar { gap: 3px; } button.ico.wide { padding: 0 4px; } }
 /* on-screen keyboards (as in the Unreal Speccy web port) */
@@ -430,6 +447,89 @@ select.usel-src { display: none !important; }
 .usel-combo.open > input { border-color: var(--accent); } .usel-combo.open .usel-arr { transform: rotate(180deg); }
 .usel-it.ing { padding-left: 18px; } .usel-grp { padding: 5px 10px 2px; font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; }
 @media (pointer: coarse) { .usel-it { padding: 8px 12px; } }
+
+/* File Commander editor (F4) */
+#fewin { width: min(640px, calc(100vw - 8px)); height: min(460px, calc(100vh - 16px)); min-width: 300px; min-height: 180px; z-index: 11; }
+#fewin .dbghead span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#fewin .fvbar kbd { font: 9px ui-monospace, Consolas, monospace; color: var(--dim); }
+#fetext[hidden], #fehex[hidden], #fedlg[hidden] { display: none; }
+#fetext { flex: 1; min-height: 0; margin: 0; padding: 6px 10px; border: 0; resize: none; outline: none; background: var(--bg); color: var(--text); font: 12px/1.35 ui-monospace, Consolas, monospace; tab-size: 8; white-space: pre; overflow: auto; user-select: text; -webkit-user-select: text; }
+#fetext.wrap { white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; }
+#fehex { flex: 1; min-height: 0; position: relative; overflow: auto; outline: none; }
+#fehex .ferows { position: absolute; left: 0; top: 0; margin: 0; padding: 0 10px; font: 12px/1.35 ui-monospace, Consolas, monospace; color: var(--text); white-space: pre; user-select: none; cursor: text; }
+#fehex .ferows b { font-weight: normal; } #fehex .ferows .cur { background: var(--accent); color: #111; } #fehex .ferows .cur2 { outline: 1px solid var(--dim); }
+#fehex .ferows .cur u { text-decoration: none; background: #fff; }
+#feinfo.err { color: var(--warn); }
+#fedlg { position: absolute; inset: 28px 0 0 0; z-index: 5; display: flex; align-items: center; justify-content: center; background: rgba(5,7,10,.55); }
+#fedlg .box { width: min(380px, calc(100% - 24px)); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.5); padding: 12px 14px; font-size: 13px; color: var(--text); }
+#fedlg .t { font-weight: 600; margin-bottom: 6px; } #fedlg .x { white-space: pre-line; color: var(--dim); }
+#fedlg .btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; } #fedlg .btns button { padding: 3px 14px; }
+#fedlg .fesa { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; color: var(--text); }
+#fedlg .fesa label { display: flex; align-items: center; gap: 8px; } #fedlg .fesa input { flex: 1; min-width: 0; height: 24px; padding: 0 6px; font: 12px ui-monospace, Consolas, monospace; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 4px; }
+#fedlg .fesa select { flex: 1; min-width: 0; height: 24px; }
+
+/* Text window: paste into BK */
+#txtwin { width: min(460px, calc(100vw - 8px)); height: min(380px, calc(100vh - 16px)); min-width: 280px; min-height: 180px; }
+.txtbar { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 5px 6px; border-bottom: 1px solid var(--line); }
+.txtbar button { height: 26px; padding: 0 9px; font-size: 12px; }
+.txtbar .sp { flex: 1; }
+#txtarea { flex: 1; min-height: 0; margin: 0; padding: 6px 10px; border: 0; resize: none; outline: none; background: var(--bg); color: var(--text); font: 12px/1.35 ui-monospace, Consolas, monospace; white-space: pre; overflow: auto; user-select: text; -webkit-user-select: text; }
+#txtarea:placeholder-shown { white-space: pre-wrap; }
+.txtinfo { padding: 3px 10px; font-size: 11px; color: var(--dim); border-top: 1px solid var(--line); min-height: 20px; }
+.txtinfo.err { color: var(--warn); }
+
+/* REST API link builder */
+#restwin { width: min(460px, calc(100vw - 8px)); min-width: 300px; min-height: 200px; }
+.rabody { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+.ragrid { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 5px 10px; align-items: center; font-size: 12px; }
+.ragrid .chk { font: 12px ui-monospace, Consolas, monospace; color: var(--accent); gap: 6px; }
+.ragrid .chk input { width: 14px; height: 14px; }
+.ragrid .ralab { font: 12px ui-monospace, Consolas, monospace; color: var(--accent); padding-left: 20px; }
+.ragrid select, .ragrid input:not([type]) { height: 26px; font-size: 12px; min-width: 0; }
+.ragrid input:not([type]) { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 0 8px; font-family: ui-monospace, Consolas, monospace; }
+.ragrid [hidden] { display: none !important; }
+.rarow { display: flex; gap: 6px; min-width: 0; } .rarow > * { flex: 1; min-width: 0; } .rarow > .radrv { flex: 0 0 56px; }
+.ranote { font-size: 11px; color: var(--dim); }
+#raout { width: 100%; resize: vertical; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; font: 12px/1.4 ui-monospace, Consolas, monospace; word-break: break-all; }
+.rabtns { display: flex; gap: 6px; align-items: center; } .rabtns .ranote { flex: 1; } #ranote { color: var(--accent); }
+#rahelp { width: min(420px, calc(100vw - 8px)); height: min(520px, calc(100vh - 16px)); }
+#rahelp .hbody { flex: 1; overflow-y: auto; padding: 6px 12px 10px; font-size: 12px; line-height: 1.35; }
+#rahelp p { margin: 4px 0 8px; color: var(--dim); }
+#rahelp h4 { margin: 12px 0 2px; font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+#rahelp table.keys td:first-child { white-space: nowrap; vertical-align: top; }
+
+/* Performance: tiles with graphs (everything drawn on canvases) */
+#perfwin { width: min(440px, calc(100vw - 8px)); min-width: 300px; min-height: 200px; }
+#perfwin:focus, #pfhelp:focus { outline: none; }
+#perfwin .dbghead b { font: 11px ui-monospace, Consolas, monospace; color: var(--dim); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pfgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; overflow-y: auto; }
+@media (max-width: 380px) { .pfgrid { grid-template-columns: 1fr; } }
+.pft { background: #0e1013; border: 1px solid #1f232a; border-radius: 6px; padding: 6px 8px 5px; min-width: 0; }
+.pft .h { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); }
+.pft .h span { flex: none; }
+.pft canvas.pv { display: block; flex: 1; min-width: 0; height: 16px; }
+.pft canvas.pg { display: block; width: 100%; height: 46px; margin: 4px 0 3px; }
+.pft canvas.ps { display: block; width: 100%; height: 14px; }
+#pfhelp { width: min(300px, calc(100vw - 8px)); height: min(480px, calc(100vh - 16px)); }
+#pfhelp .hbody { flex: 1; overflow-y: auto; padding: 6px 12px 10px; font-size: 12px; line-height: 1.35; }
+#pfhelp p { margin: 4px 0 8px; color: var(--dim); }
+#pfhelp h4 { margin: 12px 0 2px; font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+
+/* System Info: built once, live values drawn on canvas (no text written into the page twice a second) */
+#sysinfo:focus { outline: none; }
+#sysinfo { width: min(440px, calc(100vw - 8px)); height: min(600px, calc(100vh - 16px)); min-width: 300px; min-height: 200px; }
+#sibody { flex: 1; overflow-y: auto; padding: 6px 12px 10px; font-size: 12px; line-height: 1.35; }
+#sibody h4 { margin: 10px 0 3px; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); }
+#sibody h4:first-child { margin-top: 2px; }
+#sibody table { border-collapse: collapse; width: 100%; font-size: 12px; }
+#sibody td { padding: 2px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+#sibody td:first-child { white-space: nowrap; color: var(--accent); width: 112px; padding-right: 12px; font-family: ui-monospace, Consolas, monospace; }
+#sibody td.v { font-family: ui-monospace, Consolas, monospace; color: var(--text); word-break: break-word; }
+#sibody .regs { display: grid; grid-template-columns: repeat(4, auto 1fr); gap: 1px 6px; font: 12px ui-monospace, Consolas, monospace; padding: 2px 4px; }
+#sibody .regs b { color: var(--accent); font-weight: 400; }
+#sibody .dim { color: var(--dim); }
+#sibody .regs span { min-width: 0; }
+#sibody canvas.sicv { display: block; width: 100%; }
 </style>
 </head>
 <body>
@@ -453,6 +553,9 @@ select.usel-src { display: none !important; }
   <symbol id="i-load" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1"/><path d="M3 7v11a1 1 0 0 0 1 1h14.5a1 1 0 0 0 1-.8L21.8 11a1 1 0 0 0-1-1.2H7.2a1 1 0 0 0-1 .8L4 19"/></symbol>
   <symbol id="i-disk" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M12 13h.01M7 6h6"/></symbol>
   <symbol id="i-zip" viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M10 6h2M10 9h2M10 12h2M10 15h2v3h-2z"/></symbol>
+  <symbol id="i-perf" viewBox="0 0 24 24"><path d="M3 20h18M5 16l4-5 4 3 6-8"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V2.8h6V4M9 10h6M9 14h6M9 18h3"/></symbol>
   <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></symbol>
   <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol>
 </svg>
@@ -485,6 +588,10 @@ select.usel-src { display: none !important; }
           <button id="dbgbtn"><svg><use href="#i-bug"/></svg><span>Debugger</span></button>
           <button id="mmbtn"><svg><use href="#i-grid"/></svg><span>Memory map</span></button>
           <button id="gfxbtn"><svg><use href="#i-search"/></svg><span>Graph Search</span></button>
+          <button id="txtbtn"><svg><use href="#i-text"/></svg><span>TEXT:paste</span></button>
+          <button id="pfbtn"><svg><use href="#i-perf"/></svg><span>Performance</span></button>
+          <button id="sibtn"><svg><use href="#i-info"/></svg><span>System Info</span></button>
+          <button id="rabtn"><svg><use href="#i-link"/></svg><span>REST API link</span></button>
           <button id="savestbtn"><svg><use href="#i-save"/></svg><span>Save state (.msf)</span></button>
         </div>
       </div>
@@ -679,6 +786,10 @@ select.usel-src { display: none !important; }
           <tr><td>Debugger</td><td>disassembler, registers, breakpoints, steps, memory</td></tr>
           <tr><td>Memory map</td><td>banks of address space, pages as pictures</td></tr>
           <tr><td>Graph Search</td><td>memory as pictures (BW, Color)</td></tr>
+          <tr><td>Text</td><td>paste into BK (Ctrl / Cmd+V on screen), typing a program from a text</td></tr>
+          <tr><td>Performance</td><td>live graphs: where CPU code runs, host load, RAM pages written, disk, I/O, frames</td></tr>
+          <tr><td>REST API</td><td>start by link: model, clock, disks, HDD, tape, state, script, autorun / run; Tools → REST API link builds link</td></tr>
+          <tr><td>System Info</td><td>machine, CPU, memory and video, storage, devices, sound, input, browser; Copy as text</td></tr>
         </table>
       </div>
       <div class="card">
@@ -710,7 +821,8 @@ select.usel-src { display: none !important; }
       <tr><td>Sound</td><td>sound on / off; volume, devices, oscilloscope: Options → Sound</td></tr>
       <tr><td>Max speed</td><td>emulation as fast as browser can, no sound; fps shows frames reached</td></tr>
       <tr><td>Reset</td><td>restart BK (as power on)</td></tr>
-      <tr><td>Tools</td><td>File Commander, Debugger, Memory map, Graph Search, Save state</td></tr>
+      <tr><td>Tools</td><td>File Commander, Debugger, Memory map, Graph Search, Text, Performance, System Info, REST API link, Save state</td></tr>
+      <tr><td>Paste</td><td>Ctrl / Cmd+V on BK screen: clipboard text typed into BK (line end = ВВОД), at max speed. Tools → Text: Type into BK, Copy</td></tr>
       <tr><td>System</td><td>model, CPU clock (Options → System); Apply restarts machine and closes window</td></tr>
       <tr><td>Options</td><td>model, CPU clock, window size, monitor, keyboard; About (i)</td></tr>
       <tr><td>?</td><td>this help</td></tr>
@@ -779,20 +891,26 @@ select.usel-src { display: none !important; }
 <div id="fcwin" hidden role="dialog" aria-label="File Commander">
   <div class="dbghead fhead"><span>File Commander</span><button id="fchelpbtn" title="Help">?</button><button id="fcclose" title="Close (Esc, F1)">✕</button></div>
   <div class="fcpanels">
-    <div class="fcpanel" id="fcp0"><div class="fchead"><select class="fcsrc" title="File set"></select><span class="fckind"></span><button class="fcboot" hidden title="Boot from this disk (machine restarts)">boot</button><button class="fceject" hidden title="Eject: take image out of drive">⏏</button></div><div class="fclist"></div><div class="fcfoot"></div></div>
-    <div class="fcpanel" id="fcp1"><div class="fchead"><select class="fcsrc" title="File set"></select><span class="fckind"></span><button class="fcboot" hidden title="Boot from this disk (machine restarts)">boot</button><button class="fceject" hidden title="Eject: take image out of drive">⏏</button></div><div class="fclist"></div><div class="fcfoot"></div></div>
+    <div class="fcpanel" id="fcp0"><div class="fchead"><select class="fcsrc" title="File set"></select><span class="fckind"></span><select class="fcsort" title="Sort: folders first, then files. ext: by extension, then name; name; size: largest first"><option value="ext">ext</option><option value="name">name</option><option value="size">size</option></select><button class="fcboot" hidden title="Boot from this disk (machine restarts)">boot</button><button class="fceject" hidden title="Eject: take image out of drive">⏏</button></div><div class="fclist"></div><div class="fcfoot"></div></div>
+    <div class="fcpanel" id="fcp1"><div class="fchead"><select class="fcsrc" title="File set"></select><span class="fckind"></span><select class="fcsort" title="Sort: folders first, then files. ext: by extension, then name; name; size: largest first"><option value="ext">ext</option><option value="name">name</option><option value="size">size</option></select><button class="fcboot" hidden title="Boot from this disk (machine restarts)">boot</button><button class="fceject" hidden title="Eject: take image out of drive">⏏</button></div><div class="fclist"></div><div class="fcfoot"></div></div>
   </div>
   <div class="fcbar">
     <button id="fcview" title="View file: text, hex, octal, disassembler (F3)">View <kbd>F3</kbd></button>
-    <button id="fccopy" title="Copy to other panel (F5)">Copy <kbd>F5</kbd></button>
+    <button id="fcedit" title="Edit file: text or hex (F4)">Edit <kbd>F4</kbd></button>
+    <button id="fccopy" title="Copy to other panel, folders too (F5)">Copy <kbd>F5</kbd></button>
+    <button id="fcmkdir" title="New folder (RAM, zip sets)">MkDir <kbd>F7</kbd></button>
     <button id="fcdel" title="Delete (F8)">Delete <kbd>F8</kbd></button>
     <span class="sp"></span>
-    <button id="fcup" title="Upload files from host to this panel (drop supported); zip opens as new set">Put Files</button>
-    <button id="fcdown" title="Download selected files to host (one as is, multiple as FCfiles.zip)">Get Files</button>
+    <button id="fcfiles" class="fcmenu" title="Download / upload files">Files <span class="ar">▾</span></button>
   </div>
   <div class="fcstat" id="fcstat"></div>
   <input type="file" id="fcfile" hidden multiple>
-  <div id="fchelp" hidden tabindex="0">
+  <div id="fcdlg" hidden><div class="box" role="alertdialog"><div class="t"></div><div class="x"></div>
+    <div class="b"><button class="ok primary">OK</button><button class="no">Cancel</button></div></div></div>
+</div>
+<div id="fchelp" class="dwin" hidden role="dialog" aria-label="File Commander help" tabindex="-1">
+  <div class="dbghead fhead"><span>File Commander help</span><button id="fchelpclose" title="Close (Esc)">✕</button></div>
+  <div class="hbody">
     <h4>Panels</h4>
     <table class="keys">
       <tr><td>set</td><td>list at top of panel: server sets (Load → server list), own zip sets, mounted drives (A: .. D:, HDD), RAM</td></tr>
@@ -800,39 +918,32 @@ select.usel-src { display: none !important; }
       <tr><td>RAM</td><td>files put from host, files saved by BK programs to tape, states (Tools → Save state)</td></tr>
       <tr><td>ALT</td><td>games folder: other versions of games with same name</td></tr>
       <tr><td>Tab</td><td>other panel</td></tr>
-      <tr><td>Space / Ins</td><td>select file; + all, − none</td></tr>
+      <tr><td>Space / Ins</td><td>select file or folder; + all, − none (size: with contents of folders)</td></tr>
+      <tr><td>ext / name / size</td><td>sort of panel (right of its list): folders first; ext: by extension, then name; size: largest first</td></tr>
       <tr><td>letter, digit</td><td>jump to next file starting with it</td></tr>
       <tr><td>Backspace</td><td>folder up</td></tr>
     </table>
     <h4>Keys and buttons</h4>
     <table class="keys">
       <tr><td>Enter</td><td>run (double click too): .BIN — reset, starts in current model (BK-0010 models), its set becomes tape: overlays and data load from it (EMT 36), its folder first; .MSF — state loads in its model; .BKSCRIPT — typed into BK</td></tr>
-      <tr><td>View (F3)</td><td>text (BK KOI-8, KOI8-R, CP866, 1251), hex, octal, PDP-11 disassembler; .MSF with its screen picture</td></tr>
-      <tr><td>Copy (F5)</td><td>to other panel</td></tr>
-      <tr><td>Delete (F8)</td><td>from panel (server file stays)</td></tr>
+      <tr><td>View (F3)</td><td>text (BK KOI-8, KOI8-R, CP866, 1251, Latin-1, UTF-8; Wrap: W), hex, octal, PDP-11 disassembler (Org: address of .bin); .MSF with its screen picture</td></tr>
+      <tr><td>Edit (F4)</td><td>text or hex (offsets octal), encodings as in view; F2 / Ctrl+S save back, Shift+F2 save as (this panel or other one), F4 text / hex, F8 encoding; text: Wrap (Alt+W); hex: Tab hex / characters, Ins / Del insert / remove byte. Every byte has its character: file comes back byte for byte</td></tr>
+      <tr><td>Copy (F5)</td><td>to other panel, folders with their files</td></tr>
+      <tr><td>MkDir (F7)</td><td>new folder (RAM, zip sets)</td></tr>
+      <tr><td>Delete (F8)</td><td>from panel, folders with their files (server file stays)</td></tr>
       <tr><td>F2</td><td>reread both panels</td></tr>
       <tr><td>Enter on image</td><td>.IMG / .BKD / .DSK / .HDI: Boot (model for image restarts from it, File Commander closes) or A: .. D: (drive, no restart); HDD: Boot (master) or Slave. The drive is then shown in this panel</td></tr>
       <tr><td>Enter on tape</td><td>.TAP / .WAV: tape file is shown; Load (reset + typed command) or Play</td></tr>
-      <tr><td>Put Files</td><td>uploads files from host (drop supported); zip opens as new set</td></tr>
-      <tr><td>Get Files</td><td>download files to host (one file as is; multiple files as zip)</td></tr>
+      <tr><td>Files / Download Files</td><td>to host: one file as is; more files or folders as zip (folders kept)</td></tr>
+      <tr><td>Files / Upload Files</td><td>from host into this panel (drop supported); zip unpacked with its folders</td></tr>
+      <tr><td>Files / Open zip as set</td><td>zip from host in panel list as set of its own</td></tr>
       <tr><td>Esc, F1</td><td>close File Commander</td></tr>
       <tr><td>on-screen keys</td><td>XT and BK keyboards control File Commander while it is active: arrows, Tab, Enter, Esc (КТ, СТОП), letters; F keys of XT</td></tr>
     </table>
-  </div>
-  <div id="fcdlg" hidden><div class="box" role="alertdialog"><div class="t"></div><div class="x"></div>
-    <div class="b"><button class="ok primary">OK</button><button class="no">Cancel</button></div></div></div>
+    </div>
 </div>
 <div id="dbgwin" class="dwin" hidden role="dialog" aria-label="Debugger">
-  <div class="dbghead fhead"><span>Debugger</span><button id="dbghelpbtn" title="Keys">?</button><button id="dbgclose" title="Close (Esc)">✕</button></div>
-  <div id="dbghelp" hidden>
-    <table class="keys">
-      <tr><td>F5</td><td>run / stop</td></tr><tr><td>F11</td><td>step (into calls)</td></tr><tr><td>F10</td><td>step over (JSR, EMT, TRAP run through)</td></tr>
-      <tr><td>Shift+F11</td><td>step out (to RTS / RTI / RTT)</td></tr><tr><td>F4</td><td>run to cursor line</td></tr><tr><td>F9, double click</td><td>breakpoint on cursor line</td></tr>
-      <tr><td>↑ ↓ PgUp PgDn, wheel</td><td>move in code</td></tr><tr><td>G</td><td>go to address (octal)</td></tr><tr><td>M</td><td>memory dump address</td></tr>
-      <tr><td>double click value</td><td>change register / memory word (octal, Enter)</td></tr>
-    </table>
-    <p class="note">Screen goes on being drawn while CPU is stopped. Breakpoint stop opens this window.</p>
-  </div>
+  <div class="dbghead fhead"><span>Debugger</span><button id="dbghelpbtn" title="Help">?</button><button id="dbgclose" title="Close (Esc)">✕</button></div>
   <div class="dbgbar">
     <button id="dbgrun" title="Run (F5)">Run <kbd>F5</kbd></button><button id="dbgstop" title="Stop (F5)">Stop</button>
     <button id="dbgstep" title="Step into (F11)">Step <kbd>F11</kbd></button><button id="dbgover" title="Step over (F10)">Over <kbd>F10</kbd></button>
@@ -849,6 +960,18 @@ select.usel-src { display: none !important; }
   <div id="dbgdump"></div>
   <div id="dbgbps"></div>
 </div>
+<div id="dbghelp" class="dwin" hidden role="dialog" aria-label="Debugger help" tabindex="-1">
+  <div class="dbghead fhead"><span>Debugger help</span><button id="dbghelpclose" title="Close (Esc)">✕</button></div>
+  <div class="hbody">
+    <table class="keys">
+      <tr><td>F5</td><td>run / stop</td></tr><tr><td>F11</td><td>step (into calls)</td></tr><tr><td>F10</td><td>step over (JSR, EMT, TRAP run through)</td></tr>
+      <tr><td>Shift+F11</td><td>step out (to RTS / RTI / RTT)</td></tr><tr><td>F4</td><td>run to cursor line</td></tr><tr><td>F9, double click</td><td>breakpoint on cursor line</td></tr>
+      <tr><td>↑ ↓ PgUp PgDn, wheel</td><td>move in code</td></tr><tr><td>G</td><td>go to address (octal)</td></tr><tr><td>M</td><td>memory dump address</td></tr>
+      <tr><td>double click value</td><td>change register / memory word (octal, Enter)</td></tr>
+    </table>
+    <p class="note">Screen goes on being drawn while CPU is stopped. Breakpoint stop opens this window.</p>
+  </div>
+</div>
 <div id="mmwin" class="dwin" hidden role="dialog" aria-label="Memory map">
   <div class="dbghead fhead"><span>Memory map</span><button id="mmclose" title="Close (Esc)">✕</button></div>
   <div class="mmbody" tabindex="0">
@@ -857,6 +980,81 @@ select.usel-src { display: none !important; }
     <canvas id="mmcanvas" width="512" height="256"></canvas>
     <p class="note">64K address space in 16 banks of 4K: where each comes from in the physical memory (R readable, W writable). The page is shown as the BK screen shows memory: 64 bytes a line.</p>
   </div>
+</div>
+<div id="txtwin" class="dwin" hidden role="dialog" aria-label="Text">
+  <div class="dbghead fhead"><span>Text</span><button id="txtclose" title="Close (Esc)">✕</button></div>
+  <div class="txtbar">
+    <button id="txttype" title="Type text into BK as from keyboard (line end = ВВОД), at max speed; Ctrl / Cmd+V on BK screen does the same">Type into BK</button>
+    <span class="sp"></span>
+    <button id="txtcopy" title="Copy text to clipboard">Copy</button>
+    <button id="txtsave" title="Save as .txt">Save</button>
+    <button id="txtclear" title="Clear">Clear</button>
+  </div>
+  <textarea id="txtarea" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off" placeholder="10 PRINT &quot;HELLO&quot;&#10;20 GOTO 10&#10;&#10;Paste or type text here, then Type into BK."></textarea>
+  <div class="txtinfo" id="txtinfo"></div>
+</div>
+<div id="restwin" class="dwin" hidden role="dialog" aria-label="REST API link">
+  <div class="dbghead fhead"><span>REST API link</span><button id="rahelpbtn" title="Help">?</button><button id="raclose" title="Close (Esc)">✕</button></div>
+  <div class="rabody">
+    <div class="ragrid">
+      <label class="chk"><input type="checkbox" id="ra_model" checked>model</label><select id="rav_model"></select>
+      <label class="chk"><input type="checkbox" id="ra_speed">speed</label><select id="rav_speed" title="CPU clock: multiple of 3 MHz (BK-0010) or 4 MHz (BK-0011)"></select>
+      <label class="chk"><input type="checkbox" id="ra_a">fdd</label><span class="rarow"><select id="rav_fdrv" class="radrv" title="Drive"><option value="a">A:</option><option value="b">B:</option><option value="c">C:</option><option value="d">D:</option></select><input id="rav_a" list="ra_disks" placeholder="img/disks.zip/WRKANDOS.IMG" spellcheck="false" autocomplete="off"></span>
+      <label class="chk"><input type="checkbox" id="ra_hdd">hdd</label><span class="rarow"><select id="rav_hdrv" class="radrv" title="HDD of SMK-512"><option value="0">0</option><option value="1">1</option></select><input id="rav_hdd" list="ra_hdds" placeholder="img/disks.zip/TEST.HDI" spellcheck="false" autocomplete="off"></span>
+      <label class="chk"><input type="checkbox" id="ra_tape">tape</label><input id="rav_tape" list="ra_tapes" placeholder="img/games.zip or a .tap / .wav / .bin" spellcheck="false" autocomplete="off">
+      <label class="chk"><input type="checkbox" id="ra_snap">snap</label><input id="rav_snap" list="ra_snaps" placeholder="state .msf" spellcheck="false" autocomplete="off">
+      <label class="chk"><input type="checkbox" id="ra_script">script</label><input id="rav_script" list="ra_scripts" placeholder="img/bkscript.zip/BASIC.BKSCRIPT" spellcheck="false" autocomplete="off">
+      <datalist id="ra_disks"></datalist><datalist id="ra_hdds"></datalist><datalist id="ra_tapes"></datalist><datalist id="ra_snaps"></datalist><datalist id="ra_scripts"></datalist>
+      <span class="ralab">start</span><select id="rav_start"><option value="">—</option><option value="autorun">autorun: boot A: / HDD, load tape</option><option value="run">run .bin of tape set</option></select>
+      <span class="ralab" id="ral_run">file</span><input id="rav_run" placeholder="ARKANOID" spellcheck="false" autocomplete="off">
+      <label class="chk"><input type="checkbox" id="ra_mute">mute</label><span class="ranote">sound off</span>
+      <label class="chk"><input type="checkbox" id="ra_kbd">kbd</label><select id="rav_kbd" title="On-screen keyboard at start"><option value="off">— (off)</option><option value="bk">BK</option><option value="xt">XT</option><option value="joy">Joystick</option></select>
+    </div>
+    <textarea id="raout" readonly rows="3" spellcheck="false"></textarea>
+    <div class="rabtns"><span class="ranote" id="ranote"></span><button id="racopy" class="primary">Copy</button><button id="raopen">Open</button></div>
+  </div>
+</div>
+<div id="rahelp" class="dwin" hidden role="dialog" aria-label="REST API help">
+  <div class="dbghead fhead"><span>REST API help</span><button id="rahelpclose" title="Close">✕</button></div>
+  <div class="hbody">
+    <p>Link to this page with parameters starts a machine as set: <b>index.html?model=bk0011mfdd&amp;fdd=a:img/disks.zip/WRKANDOS.IMG&amp;autorun=1</b>. Parameters may also follow #. Paths are on this site; file inside zip: set.zip/NAME.EXT; full URL of another site works when that site allows it (CORS). What a link sets is not stored: visitor's own settings stay.</p>
+    <h4>Parameters</h4>
+    <table class="keys">
+      <tr><td>model=</td><td>bk0010, bk0010mstd, bk0010ext32, bk0010fdd (KNGMD), bk0010a16m, bk0010smk, bk0011, bk0011fdd, bk0011smk, bk0011m, bk0011mfdd, bk0011ma16m, bk0011msmk; short: bk10, bk11m, bk11mfdd …, kngmd for fdd</td></tr>
+      <tr><td>speed=</td><td>clock: 2 (×3 / ×4 MHz) or 6mhz; nearest step of slider</td></tr>
+      <tr><td>fdd=</td><td>disk image with its drive: a:img/disks.zip/WRKANDOS.IMG … d:…; without drive goes to A:. Old a= … d= work too. Model without controller is switched</td></tr>
+      <tr><td>hdd0= hdd1=</td><td>.hdi for SMK-512 master / slave (hdd= is master); no model: BK-0011M + SMK-512</td></tr>
+      <tr><td>tape=</td><td>.tap / .wav (cassette), .bin (EMT 36, BK-0010 models) or zip set of .bin files (shown in File Commander)</td></tr>
+      <tr><td>snap=</td><td>machine state .msf (its model)</td></tr>
+      <tr><td>script=</td><td>.bkscript typed into BK</td></tr>
+      <tr><td>autorun=1</td><td>start: disk in A: boots (system disk; model for image), else HDD; tape: load command typed (.tap / .wav), .bin starts</td></tr>
+      <tr><td>run=</td><td>.bin of zip set in tape= started by name: tape=img/games.zip&amp;run=ARKANOID</td></tr>
+      <tr><td>mute=1</td><td>sound off</td></tr>
+      <tr><td>kbd=</td><td>on-screen keyboard: bk, xt, joy; off = hidden (visitor's own setting is not changed)</td></tr>
+    </table>
+    <h4>Server list</h4>
+    <p>Entry of img/list.json may carry "run": "?model=bk0011mfdd&amp;fdd=a:img/disks.zip/WRKANDOS.IMG&amp;autorun=1" — Load menu starts it as link on this page.</p>
+  </div>
+</div>
+<div id="perfwin" class="dwin" hidden role="dialog" aria-label="Performance" tabindex="-1">
+  <div class="dbghead fhead"><span>Performance</span><b id="pfstate"></b><button id="pfhelpbtn" title="Help">?</button><button id="pfclose" title="Close (Esc)">✕</button></div>
+  <div class="pfgrid" id="pfgrid"></div>
+</div>
+<div id="pfhelp" class="dwin" hidden role="dialog" aria-label="Performance help">
+  <div class="dbghead fhead"><span>Performance help</span><button id="pfhelpclose" title="Close">✕</button></div>
+  <div class="hbody">
+    <p>Live graphs, updated twice a second. Big number is current value, line below explains it.</p>
+    <h4>CPU code at</h4><p>Where the CPU runs its code: 64K address space as 4 rows of 16K (000000, 040000, 100000, 140000; RAM page or ROM is signed), 1K blocks glow by how often the program counter is there. Big number: hottest block (octal). Below: share of time in ROM / RAM, busy = part of time CPU is not in WAIT.</p>
+    <h4>Host</h4><p>How much of real time this browser spends emulating. Below: milliseconds per emulated frame (20 ms = real time limit).</p>
+    <h4>Memory</h4><p>RAM as map of 16K pages (BK-0010: 2, BK-0011: 8): written pages glow, pages mapped into the address space now are outlined. Big number: pages written since last update.</p>
+    <h4>Disk</h4><p>Share of frames with floppy drive busy (reading or writing).</p>
+    <h4>I/O</h4><p>Accesses to registers 177600–177777 per frame (read + write).</p>
+    <h4>Frames</h4><p>Emulated frames per second: 50 is real time; red above dashed line = faster than real time (Max speed).</p>
+  </div>
+</div>
+<div id="sysinfo" class="dwin" hidden role="dialog" aria-label="System Info" tabindex="-1">
+  <div class="dbghead fhead"><span>System Info</span><button id="sicopy" title="Copy as text">Copy</button><button id="siclose" title="Close (Esc)">✕</button></div>
+  <div class="hbody" id="sibody"></div>
 </div>
 <div id="gfxwin" class="dwin" hidden role="dialog" aria-label="Graph Search">
   <div class="dbghead fhead"><span>Graph Search</span><button id="gfxclose" title="Close (Esc)">✕</button></div>
@@ -871,6 +1069,20 @@ select.usel-src { display: none !important; }
   <div class="gfxmain"><div class="gfxview" id="gfxview"><div class="gfxcw"><canvas id="gfxcanvas" tabindex="0"></canvas><div class="gfxedge" id="gfxedge" title="Drag to change width"></div></div></div><input type="range" id="gfxscroll" class="vscroll" min="0" max="65535" value="0" title="Address"></div>
   <div class="gfxstat" id="gfxstat"></div>
 </div>
+<div id="fewin" class="dwin" hidden role="dialog" aria-label="Editor">
+  <div class="dbghead fhead"><span id="fetitle">Editor</span><button id="feclose" title="Close (Esc)">✕</button></div>
+  <div class="fvbar">
+    <select id="femode" title="Text or hex (F4)"><option value="text">Text</option><option value="hex">Hex</option></select>
+    <select id="feenc" title="Encoding (F8)"></select>
+    <button id="fesave" class="fvwrap" title="Write file back to its set (F2, Ctrl+S)">Save <kbd>F2</kbd></button>
+    <button id="fesaveas" class="fvwrap" title="Save under new name, in this panel or other one (Shift+F2)">Save as…</button>
+    <button id="fewrap" class="fvwrap" title="Wrap long lines by words at window's width (Alt+W); file keeps its lines">Wrap</button>
+    <span id="feinfo"></span>
+  </div>
+  <textarea id="fetext" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea>
+  <div id="fehex" tabindex="0" hidden><div class="fesp"></div><pre class="ferows"></pre></div>
+  <div id="fedlg" hidden><div class="box"><div class="t"></div><div class="x"></div><div class="btns"><button class="ok primary">OK</button><button class="no">Cancel</button></div></div></div>
+</div>
 <div id="fvwin" hidden role="dialog" aria-label="Viewer">
   <div class="dbghead fhead"><span id="fvtitle">Viewer</span><button id="fvclose" title="Close (Esc)">✕</button></div>
   <div class="fvbar">
@@ -878,19 +1090,20 @@ select.usel-src { display: none !important; }
     <select id="fvenc" title="Encoding (F8 / E)"></select>
     <label id="fvorgl" for="fvorg">Org</label><input id="fvorg" maxlength="6" spellcheck="false" autocomplete="off" title="Load address (octal) for code views">
     <label id="fvgol" for="fvgo">Go</label><input id="fvgo" maxlength="6" spellcheck="false" autocomplete="off" title="Jump to address (octal), Enter; G in viewer puts cursor here">
+    <button id="fvwrap" class="fvwrap" title="Wrap long lines by words at the window's width (W)">Wrap</button>
     <span id="fvinfo"></span>
   </div>
   <div id="fvimg" hidden></div>
   <pre id="fvbody" tabindex="0"></pre>
 </div>
 
-<script src="usel.js?v=20261022140203"></script>
-<script src="wasi_fs.js?v=20261022140203"></script>
-<script src="unzip.js?v=20261022140203"></script>
-<script src="fcmd.js?v=20261022140203"></script>
-<script src="diskfs.js?v=20261022140203"></script>
-<script src="dbg.js?v=20261022140203"></script>
-<script src="vkbd.js?v=20261022140203"></script>
-<script src="app.js?v=20261022140203"></script>
+<script src="usel.js?v=20261023163756"></script>
+<script src="wasi_fs.js?v=20261023163756"></script>
+<script src="unzip.js?v=20261023163756"></script>
+<script src="fcmd.js?v=20261023163756"></script>
+<script src="diskfs.js?v=20261023163756"></script>
+<script src="dbg.js?v=20261023163756"></script>
+<script src="vkbd.js?v=20261023163756"></script>
+<script src="app.js?v=20261023163756"></script>
 </body>
 </html>
