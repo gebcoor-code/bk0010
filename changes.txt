@@ -322,3 +322,15 @@
   its length did not fit the file)
 * fields and buttons with focus: double frame (browser ring over accent border), now
   one accent border; Wrap (viewer, editor) on: text was the colour of the button
+
+        version 0.31.0                  27 oct 2026
+
++ offline mode (from Web Unreal Speccy): after first visit page starts without internet;
+  Options → Offline: Make offline (ROMs of all models, server list sets), Clear files,
+  Show 'offline' (red mark in BK window title when site does not answer), Check
+  connection every 20 sec
++ changes.txt in its own window: items wrapped by words at window's width, opens at end
+* drop-down lists of tool windows (File Commander, viewer, editor, Memory map, Graph
+  Search) compact; Files menu of File Commander drawn as compact list; lists of a small
+  window may go past it (from Web Unreal Speccy)
+* questions centred on window they come from (File Commander, Options, BK screen)

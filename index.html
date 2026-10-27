@@ -2,11 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="build" content="20261023181402">
+<meta name="build" content="20261027092030">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="icon" href="icon.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link id="favicon" rel="icon" href="icon.png">
+<link id="touchicon" rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<script>
+// several copies of the emulator on one site (aa.com/1/, aa.com/1/2/): each folder has its own icons; Safari keeps icons
+// by address, so the folder goes into the icon address and each copy keeps its own
+(function () { var d = location.pathname.replace(/[^\/]*$/, ''), q = '?d=' + encodeURIComponent(d);
+  document.getElementById('touchicon').href = 'apple-touch-icon.png' + q; document.getElementById('favicon').href = 'icon.png' + q; })();
+</script>
+<meta name="apple-mobile-web-app-title" content="Web BK-0010">
 <title>Web BK-0010</title>
 <style>
 :root {
@@ -38,12 +45,15 @@ select option { background: var(--panel2); color: var(--text); }
 button:hover:not(:disabled), select:hover { border-color: var(--accent); }
 button:disabled { opacity: .4; cursor: default; }
 button.on { background: var(--accent); color: #1a1208; border-color: var(--accent); }
-/* focus: one accent border, no browser ring over it (it made double frames) */
-:focus-visible { outline: none; }
+/* focus: one orange mark everywhere, the frame only changes its color (no browser ring, no thicker frame) */
+input:focus, textarea:focus, button:focus, select:focus, .usel:focus, [tabindex]:focus { outline: none; }
+input:not([type=checkbox]):not([type=radio]):not([type=range]):focus, textarea:focus { border-color: var(--accent); }
 button:focus-visible { border-color: var(--accent); }
-input:not([type=checkbox]):not([type=radio]):not([type=range]):focus, textarea:focus { outline: none; border-color: var(--accent); }
-#fcdlg .dlgin:focus, #fedlg .fesa input:focus, .dbgbar input:focus, .gfxbar input:focus, .hddgrid input:focus, .ragrid input:focus, #fvgo:focus, #fvorg:focus { border-color: var(--accent); }
 input[type=checkbox]:focus-visible, input[type=radio]:focus-visible, input[type=range]:focus-visible { outline: 1px solid var(--accent); outline-offset: 1px; }
+/* fields without a style of their own (made by a dialog): framed as the others, or the browser draws a thick square
+   frame once the focus rule above sets their border color. :where() = no weight: any rule of the project wins */
+:where(input:not([type]), input[type=text], input[type=number], input[type=search], input[type=url]) { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 4px; }
+#fcdlg .dlgin:focus, #fedlg .fesa input:focus, .dbgbar input:focus, .gfxbar input:focus, .hddgrid input:focus, .ragrid input:focus, #fvgo:focus, #fvorg:focus { border-color: var(--accent); } /* fields with an id-scoped frame */
 #model { font-size: 12px; color: var(--dim); padding: 0 4px; font-family: ui-monospace, Consolas, monospace; }
 /* the emulator screen: a window like the others, without a close button and not movable */
 #screenwin { align-self: flex-start; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 12px 40px rgba(0,0,0,.45); }
@@ -446,6 +456,9 @@ select.usel-src { display: none !important; }
 .usel-arr { width: 10px; height: 6px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }
 .usel.open, .usel:focus-visible { border-color: var(--accent); } .usel.open .usel-arr { transform: rotate(180deg); }
 .usel.usel-ph .usel-v { color: var(--dim); } .usel.usel-dis { opacity: .45; cursor: default; pointer-events: none; }
+/* the list's scroll bar: visible on a dark list (the browser's own is hard to see there) */
+.usel-pop::-webkit-scrollbar { width: 8px; } .usel-pop::-webkit-scrollbar-thumb { background: #66717e; border-radius: 4px; } .usel-pop::-webkit-scrollbar-track { background: rgba(255,255,255,.06); }
+.usel-pop { scrollbar-width: auto; scrollbar-color: #66717e rgba(255,255,255,.06); }
 .usel-pop { box-sizing: border-box; position: fixed; z-index: 70; overflow-y: auto; overscroll-behavior: contain; background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,.5); padding: 3px 0; font-size: 13px; color: var(--text); -webkit-overflow-scrolling: touch; }
 .usel-it { padding: 5px 10px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .usel-it.hot { background: var(--panel); } .usel-it.on { background: var(--accent); color: #1a1208; } .usel-it.dis { color: var(--dim); cursor: default; }
@@ -454,6 +467,16 @@ select.usel-src { display: none !important; }
 .usel-combo.open > input { border-color: var(--accent); } .usel-combo.open .usel-arr { transform: rotate(180deg); }
 .usel-it.ing { padding-left: 18px; } .usel-grp { padding: 5px 10px 2px; font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; }
 @media (pointer: coarse) { .usel-it { padding: 8px 12px; } }
+
+/* compact lists of the tool windows (<select data-pop-class="compact">, and the menu buttons of menu.js):
+   11px, 15px rows; on a touch screen the rows stay taller for a finger. Must come after the .usel-it rules above */
+.usel-pop.compact { font-size: 11px; min-width: 80px; padding: 2px 0; } .usel-pop.compact .usel-it { padding: 2px 8px; line-height: 15px; }
+.usel-pop.compact .usel-it .d { color: var(--dim); font-size: 9px; margin-left: 8px; } /* menu.js: the dim note after an item */
+@media (pointer: coarse) { .usel-pop.compact .usel-it { padding: 5px 9px; } }
+/* a narrow scroll bar (data-pop-class="compact thin"): for a list whose labels must fit its box */
+.usel-pop.thin { scrollbar-width: thin; } .usel-pop.thin::-webkit-scrollbar { width: 4px; }
+/* the menu button of menu.js: its arrow turns while the menu is open */
+.menubtn.open { border-color: var(--accent); }
 
 /* File Commander editor (F4) */
 #fewin { width: min(640px, calc(100vw - 8px)); height: min(460px, calc(100vh - 16px)); min-width: 300px; min-height: 180px; z-index: 11; }
@@ -493,6 +516,14 @@ select.usel-src { display: none !important; }
 .txtinfo.err { color: var(--warn); }
 
 /* REST API link builder */
+#offcard .offgrid { display: grid; grid-template-columns: 1fr; gap: 2px; font-size: 12px; }
+#offcard .offbtns { display: flex; gap: 8px; margin-top: 8px; } #offcard .offbtns button { padding: 3px 12px; font-size: 12px; }
+#offstat { white-space: pre-line; margin: 0 0 6px; } #offstat[hidden] { display: none; } #offstat.err { color: #e0785e; }
+#netst { color: #ff5252; font-weight: 600; } #netst[hidden] { display: none; }
+#chgwin { width: min(620px, calc(100vw - 8px)); height: min(560px, calc(100vh - 16px)); min-width: 280px; min-height: 180px; z-index: 12; }
+#chgwin:focus { outline: none; }
+#chgbody { flex: 1; min-height: 0; margin: 0; padding: 8px 12px; overflow: auto; font: 12px/1.4 ui-monospace, Consolas, monospace; color: var(--text); overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
+#chgbody .it { padding-left: 2ch; text-indent: -2ch; } #chgbody .ver { color: var(--accent); margin: 6px 0 2px; white-space: pre; } #chgbody .gap { height: 6px; }
 #restwin { width: min(460px, calc(100vw - 8px)); min-width: 300px; min-height: 200px; }
 .rabody { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
 .ragrid { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 5px 10px; align-items: center; font-size: 12px; }
@@ -615,7 +646,7 @@ select.usel-src { display: none !important; }
     </div>
   </div>
   <div id="screenwin">
-  <div class="scrhead fhead"><span id="model"></span><b id="kbdst"></b><b id="tapest" hidden title="Tape: click to stop"></b><canvas id="viz" width="64" height="16"></canvas><b id="mhz"></b><b id="fps">— fps</b></div>
+  <div class="scrhead fhead"><span id="model"></span><b id="kbdst"></b><b id="tapest" hidden title="Tape: click to stop"></b><canvas id="viz" width="64" height="16"></canvas><b id="netst" hidden title="The site did not answer: the page runs from its offline copy">offline</b><b id="mhz"></b><b id="fps">— fps</b></div>
   <div id="screenwrap">
     <canvas id="screen" width="512" height="256" tabindex="0" style="width:0;height:0"></canvas>
     <div id="fx"></div>
@@ -634,7 +665,7 @@ select.usel-src { display: none !important; }
 
 <div id="options" class="optwin" hidden role="dialog" aria-label="Options">
   <header class="fhead">
-    <div class="tabs"><button data-tab="sys" class="on">System</button><button data-tab="vid">Video</button><button data-tab="disk">Disk</button><button data-tab="inp">Input</button><button data-tab="snd">Sound</button><button data-tab="about" class="tabi" title="About"><svg><use href="#i-info"/></svg></button></div>
+    <div class="tabs"><button data-tab="sys" class="on">System</button><button data-tab="vid">Video</button><button data-tab="disk">Disk</button><button data-tab="inp">Input</button><button data-tab="snd">Sound</button><button data-tab="off">Offline</button><button data-tab="about" class="tabi" title="About"><svg><use href="#i-info"/></svg></button></div>
     <button data-close title="Close">✕</button>
   </header>
   <div class="body">
@@ -780,6 +811,20 @@ select.usel-src { display: none !important; }
         </div>
       </div>
     </div>
+    <div class="pane gone" data-pane="off">
+      <div class="card" id="offcard">
+        <h3>Offline mode</h3>
+        <p class="note" id="offstat" hidden></p>
+        <div class="offgrid">
+          <label class="chk"><input type="checkbox" id="of_rom" checked disabled> Emulator, ROMs of all models</label>
+          <label class="chk" title="The zip sets of the server list (img/list.json): games, disks, scripts, assembler …"><input type="checkbox" id="of_sets" checked> Server list sets</label>
+        </div>
+        <label class="chk" title="The site is checked at start (and later too, with the option below): when it does not answer, a red &quot;offline&quot; is shown in the BK window title, left of the clock"><input type="checkbox" id="of_label" checked> Show 'offline'</label>
+        <label class="chk" title="Off: the site is checked once, at start"><input type="checkbox" id="of_poll"> Check connection every 20 sec</label>
+        <div class="offbtns"><button id="ofmake" title="Download what is checked into the offline copy of this site: the emulator then starts without internet (also from the iOS home screen)">Make offline</button><button id="ofclear" title="Drop the downloaded files of the offline copy (the emulator itself stays)">Clear files</button></div>
+        <p class="note">The page, scripts and wasm are kept by the browser after the first visit; Make offline downloads the rest beforehand. Needs https (or localhost).</p>
+      </div>
+    </div>
     <div class="pane gone" data-pane="about">
       <div class="card about">
         <h3><img src="icon.png" alt="" class="appicon" onerror="this.remove()">Web BK-0010</h3>
@@ -836,6 +881,7 @@ select.usel-src { display: none !important; }
           <tr><td>Text</td><td>paste into BK (Ctrl / Cmd+V on screen), typing a program from a text</td></tr>
           <tr><td>Performance</td><td>live graphs: where CPU code runs, host load, RAM pages written, disk, I/O, frames</td></tr>
           <tr><td>REST API</td><td>start by link: model, clock, disks, HDD, tape, state, script, autorun / run; Tools → REST API link builds link</td></tr>
+          <tr><td>Offline</td><td>after first visit page starts without internet; Options → Offline: Make offline downloads ROMs and server sets beforehand</td></tr>
           <tr><td>System Info</td><td>machine, CPU, memory and video, storage, devices, sound, input, browser; Copy as text</td></tr>
         </table>
       </div>
@@ -845,7 +891,7 @@ select.usel-src { display: none !important; }
           <tr><td>HDD</td><td>files on HDD images</td></tr>
           <tr><td>Drives</td><td>writing files into mounted disk images</td></tr>
         </table>
-        <p class="note"><a href="changes.txt" target="_blank">changes.txt</a></p>
+        <p class="note"><a href="changes.txt" id="chglink" title="Version history: own window">changes.txt</a></p>
       </div>
       <div class="card">
         <h3>Credits</h3>
@@ -947,8 +993,8 @@ select.usel-src { display: none !important; }
 <div id="fcwin" hidden role="dialog" aria-label="File Commander">
   <div class="dbghead fhead"><span>File Commander</span><button id="fchelpbtn" title="Help">?</button><button id="fcclose" title="Close (Esc, F1)">✕</button></div>
   <div class="fcpanels">
-    <div class="fcpanel" id="fcp0"><div class="fchead"><select class="fcsrc" title="File set"></select><span class="fckind"></span><select class="fcsort" title="Sort: folders first, then files. ext: by extension, then name; name; size: largest first"><option value="ext">ext</option><option value="name">name</option><option value="size">size</option></select><button class="fcboot" hidden title="Boot from this disk (machine restarts)">boot</button><button class="fceject" hidden title="Eject: take image out of drive">⏏</button></div><div class="fclist"></div><div class="fcfoot"></div></div>
-    <div class="fcpanel" id="fcp1"><div class="fchead"><select class="fcsrc" title="File set"></select><span class="fckind"></span><select class="fcsort" title="Sort: folders first, then files. ext: by extension, then name; name; size: largest first"><option value="ext">ext</option><option value="name">name</option><option value="size">size</option></select><button class="fcboot" hidden title="Boot from this disk (machine restarts)">boot</button><button class="fceject" hidden title="Eject: take image out of drive">⏏</button></div><div class="fclist"></div><div class="fcfoot"></div></div>
+    <div class="fcpanel" id="fcp0"><div class="fchead"><select class="fcsrc" data-pop-class="compact" title="File set"></select><span class="fckind"></span><select class="fcsort" data-pop-class="compact" title="Sort: folders first, then files. ext: by extension, then name; name; size: largest first"><option value="ext">ext</option><option value="name">name</option><option value="size">size</option></select><button class="fcboot" hidden title="Boot from this disk (machine restarts)">boot</button><button class="fceject" hidden title="Eject: take image out of drive">⏏</button></div><div class="fclist"></div><div class="fcfoot"></div></div>
+    <div class="fcpanel" id="fcp1"><div class="fchead"><select class="fcsrc" data-pop-class="compact" title="File set"></select><span class="fckind"></span><select class="fcsort" data-pop-class="compact" title="Sort: folders first, then files. ext: by extension, then name; name; size: largest first"><option value="ext">ext</option><option value="name">name</option><option value="size">size</option></select><button class="fcboot" hidden title="Boot from this disk (machine restarts)">boot</button><button class="fceject" hidden title="Eject: take image out of drive">⏏</button></div><div class="fclist"></div><div class="fcfoot"></div></div>
   </div>
   <div class="fcbar">
     <button id="fcview" title="View file: text, hex, octal, disassembler (F3)">View <kbd>F3</kbd></button>
@@ -1034,7 +1080,7 @@ select.usel-src { display: none !important; }
   <div class="dbghead fhead"><span>Memory map</span><button id="mmclose" title="Close (Esc)">✕</button></div>
   <div class="mmbody" tabindex="0">
     <table id="mmtable"></table>
-    <div class="mmbar"><select id="mmpage" title="16K page of the physical memory (RAM, ROM, controllers)"></select><label class="chk"><input type="checkbox" id="mmcolor"> Color</label></div>
+    <div class="mmbar"><select id="mmpage" data-pop-class="compact" title="16K page of the physical memory (RAM, ROM, controllers)"></select><label class="chk"><input type="checkbox" id="mmcolor"> Color</label></div>
     <canvas id="mmcanvas" width="512" height="256"></canvas>
     <p class="note">64K address space in 16 banks of 4K: where each comes from in the physical memory (R readable, W writable). The page is shown as the BK screen shows memory: 64 bytes a line.</p>
   </div>
@@ -1050,6 +1096,10 @@ select.usel-src { display: none !important; }
   </div>
   <textarea id="txtarea" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off" placeholder="10 PRINT &quot;HELLO&quot;&#10;20 GOTO 10&#10;&#10;Paste or type text here, then Type into BK."></textarea>
   <div class="txtinfo" id="txtinfo"></div>
+</div>
+<div id="chgwin" class="dwin" hidden role="dialog" aria-label="changes.txt" tabindex="-1">
+  <div class="dbghead fhead"><span>changes.txt</span><button id="chgclose" title="Close (Esc)">✕</button></div>
+  <div id="chgbody"></div>
 </div>
 <div id="restwin" class="dwin" hidden role="dialog" aria-label="REST API link">
   <div class="dbghead fhead"><span>REST API link</span><button id="rahelpbtn" title="Help">?</button><button id="raclose" title="Close (Esc)">✕</button></div>
@@ -1117,8 +1167,8 @@ select.usel-src { display: none !important; }
 <div id="gfxwin" class="dwin" hidden role="dialog" aria-label="Graph Search">
   <div class="dbghead fhead"><span>Graph Search</span><button id="gfxclose" title="Close (Esc)">✕</button></div>
   <div class="gfxbar">
-    <select id="gfxmode" title="Mode (M): BW 1 bit per pixel, Color 2 bits per pixel"><option value="BW">BW</option><option value="Color">Color</option></select>
-    <select id="gfxsrc" title="Memory"><option value="0">CPU 64K</option><option value="1">Physical</option></select>
+    <select id="gfxmode" data-pop-class="compact" title="Mode (M): BW 1 bit per pixel, Color 2 bits per pixel"><option value="BW">BW</option><option value="Color">Color</option></select>
+    <select id="gfxsrc" data-pop-class="compact" title="Memory"><option value="0">CPU 64K</option><option value="1">Physical</option></select>
     <label title="Start address, octal (G)">@<input id="gfxaddr" spellcheck="false" autocomplete="off"></label>
     <label title="Width in pixels, whole bytes (Ctrl+←/→)">W<input id="gfxw" inputmode="numeric" spellcheck="false" autocomplete="off"></label>
     <label class="chk" title="Inverse (I)"><input type="checkbox" id="gfxinv">Inv</label>
@@ -1130,8 +1180,8 @@ select.usel-src { display: none !important; }
 <div id="fewin" class="dwin" hidden role="dialog" aria-label="Editor">
   <div class="dbghead fhead"><span id="fetitle">Editor</span><button id="feclose" title="Close (Esc)">✕</button></div>
   <div class="fvbar">
-    <select id="femode" title="Text or hex (F4)"><option value="text">Text</option><option value="hex">Hex</option></select>
-    <select id="feenc" title="Encoding (F8)"></select>
+    <select id="femode" data-pop-class="compact" title="Text or hex (F4)"><option value="text">Text</option><option value="hex">Hex</option></select>
+    <select id="feenc" data-pop-class="compact" title="Encoding (F8)"></select>
     <button id="fesave" class="fvwrap" title="Write file back to its set (F2, Ctrl+S)">Save <kbd>F2</kbd></button>
     <button id="fesaveas" class="fvwrap" title="Save under new name, in this panel or other one (Shift+F2)">Save as…</button>
     <button id="feasm" class="fvwrap" hidden title="Assemble (BKTurbo8): NAME.BIN and NAME.LST next to source, then Run (F9)">Asm <kbd>F9</kbd></button>
@@ -1145,8 +1195,8 @@ select.usel-src { display: none !important; }
 <div id="fvwin" hidden role="dialog" aria-label="Viewer">
   <div class="dbghead fhead"><span id="fvtitle">Viewer</span><button id="fvclose" title="Close (Esc)">✕</button></div>
   <div class="fvbar">
-    <select id="fvmode" title="View: F4 cycles · T text · H hex · O octal · D disassembler · G go to address"><option value="text">Text</option><option value="hex">Hex</option><option value="oct">Octal</option><option value="dis">Disassembler</option></select>
-    <select id="fvenc" title="Encoding (F8 / E)"></select>
+    <select id="fvmode" data-pop-class="compact" title="View: F4 cycles · T text · H hex · O octal · D disassembler · G go to address"><option value="text">Text</option><option value="hex">Hex</option><option value="oct">Octal</option><option value="dis">Disassembler</option></select>
+    <select id="fvenc" data-pop-class="compact" title="Encoding (F8 / E)"></select>
     <label id="fvorgl" for="fvorg">Org</label><input id="fvorg" maxlength="6" spellcheck="false" autocomplete="off" title="Load address (octal) for code views">
     <label id="fvgol" for="fvgo">Go</label><input id="fvgo" maxlength="6" spellcheck="false" autocomplete="off" title="Jump to address (octal), Enter; G in viewer puts cursor here">
     <button id="fvwrap" class="fvwrap" title="Wrap long lines by words at the window's width (W)">Wrap</button>
@@ -1156,13 +1206,14 @@ select.usel-src { display: none !important; }
   <pre id="fvbody" tabindex="0"></pre>
 </div>
 
-<script src="usel.js?v=20261023181402"></script>
-<script src="wasi_fs.js?v=20261023181402"></script>
-<script src="unzip.js?v=20261023181402"></script>
-<script src="fcmd.js?v=20261023181402"></script>
-<script src="diskfs.js?v=20261023181402"></script>
-<script src="dbg.js?v=20261023181402"></script>
-<script src="vkbd.js?v=20261023181402"></script>
-<script src="app.js?v=20261023181402"></script>
+<script src="usel.js?v=20261027092030"></script>
+<script src="menu.js?v=20261027092030"></script>
+<script src="wasi_fs.js?v=20261027092030"></script>
+<script src="unzip.js?v=20261027092030"></script>
+<script src="fcmd.js?v=20261027092030"></script>
+<script src="diskfs.js?v=20261027092030"></script>
+<script src="dbg.js?v=20261027092030"></script>
+<script src="vkbd.js?v=20261027092030"></script>
+<script src="app.js?v=20261027092030"></script>
 </body>
 </html>

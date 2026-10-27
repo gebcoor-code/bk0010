@@ -7,7 +7,8 @@
   'use strict';
   const done = new WeakMap(); // select → box
   // the windows a list stays inside (CSS selector); set UnrealSelect.windows before DOMContentLoaded to change it
-  const api = { windows: '[data-usel-window], .fwin, [role="dialog"]' };
+  // outer: a bigger area a list may also use when its own window is too small (e.g. the main screen; '' = the screen)
+  const api = { windows: '[data-usel-window], .fwin, [role="dialog"]', outer: '' };
   let pop = null, popFor = null, popAnchor = null; // popAnchor: the element the list hangs from (a box, or a text field with suggestions)
 
   // CSS written for "select" also styles the boxes: each such rule gets a copy for .usel (an #id of a select: its box)
@@ -111,6 +112,7 @@
     close();
     const box = done.get(sel);
     pop = document.createElement('div'); pop.className = 'usel-pop'; pop.setAttribute('role', 'listbox');
+    if (sel.dataset.popClass) pop.classList.add(...sel.dataset.popClass.split(/\s+/).filter(Boolean)); // data-pop-class: the list's own style (e.g. "compact")
     let group = null;
     [...sel.options].forEach((o, i) => {
       if (o.hidden) return;
@@ -137,16 +139,24 @@
     const r = popAnchor.getBoundingClientRect(), vv = window.visualViewport, vw = document.documentElement.clientWidth;
     let lo = 4, hi = Math.min(window.innerHeight, document.documentElement.clientHeight || 1e9, vv ? vv.height + vv.offsetTop : 1e9) - 4;
     if (vv) lo = Math.max(lo, vv.offsetTop + 4);
-    const win = popAnchor.closest(api.windows);
-    if (win) { // inside the window; a window with almost no room on both sides of the box: the screen
-      const wr = win.getBoundingClientRect();
-      if (Math.max(wr.bottom - r.bottom, r.top - wr.top) >= 100) { hi = Math.min(hi, wr.bottom - 4); lo = Math.max(lo, wr.top + 4); }
-    }
-    pop.style.minWidth = Math.round(r.width) + 'px'; pop.style.maxWidth = (vw - 8) + 'px';
+    // data-pop-extra: the list this many px wider than the box; data-pop-scale: its height × this (a shorter list)
+    const ds = popFor && popFor.dataset ? popFor.dataset : {}, extra = +ds.popExtra || 0, scale = +ds.popScale || 1;
+    pop.style.minWidth = Math.round(r.width + extra) + 'px'; pop.style.maxWidth = (vw - 8) + 'px';
     pop.style.maxHeight = ''; pop.style.top = pop.style.bottom = '';
-    const below = hi - r.bottom - 2, above = r.top - 2 - lo, want = Math.min(pop.scrollHeight, 320);
+    const win = popAnchor.closest(api.windows);
+    let cap = 1e9;
+    if (win) { // inside the window. A small window (neither the whole list nor 240 px of it fit on either side of the box):
+      // inside the outer area (api.outer) and the window together, at most 360 px; without api.outer: the screen, 360 px at most
+      const wr = win.getBoundingClientRect(), main = api.outer ? document.querySelector(api.outer) : null, mr = main ? main.getBoundingClientRect() : null;
+      if (Math.max(wr.bottom - r.bottom, r.top - wr.top) - 6 >= Math.min(pop.scrollHeight, 240)) { hi = Math.min(hi, wr.bottom - 4); lo = Math.max(lo, wr.top + 4); }
+      else if (mr && mr.height) { hi = Math.min(hi, Math.max(wr.bottom, mr.bottom) - 4); lo = Math.max(lo, Math.min(wr.top, mr.top) + 4); cap = 360; }
+      else cap = 360;
+    }
+    const below = Math.min(hi - r.bottom - 2, cap), above = Math.min(r.top - 2 - lo, cap), want = Math.min(pop.scrollHeight, 320);
     if (below >= Math.min(want, 120) || below >= above) { pop.style.top = (r.bottom + 2) + 'px'; pop.style.maxHeight = Math.max(60, below) + 'px'; }
     else { pop.style.top = Math.max(lo, r.top - 2 - Math.min(pop.scrollHeight, above)) + 'px'; pop.style.maxHeight = Math.max(60, above) + 'px'; }
+    if (scale !== 1) { const h = Math.max(60, Math.round(Math.min(parseFloat(pop.style.maxHeight) || 1e9, pop.scrollHeight) * scale)); pop.style.maxHeight = h + 'px';
+      if (pop.style.top && parseFloat(pop.style.top) < r.top) pop.style.top = Math.max(lo, r.top - 2 - Math.min(pop.scrollHeight, h)) + 'px'; }
     const w = pop.offsetWidth; pop.style.left = Math.max(4, Math.min(r.left, vw - w - 4)) + 'px';
   }
   function hot(d) { if (!pop) return; pop.querySelectorAll('.usel-it.hot').forEach((x) => x.classList.remove('hot')); d.classList.add('hot'); }

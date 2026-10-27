@@ -307,7 +307,7 @@
   const ASM_EXT = /^(ASM|MAC|S|A|INC)$/i;
   let asmMod = null;
   async function asm(name, src) {
-    if (!asmMod) asmMod = fetch('bkasm.wasm').then((r) => { if (!r.ok) throw new Error('bkasm.wasm: ' + r.status); return r.arrayBuffer(); }).then((b) => WebAssembly.compile(b));
+    if (!asmMod) asmMod = fetch('bkasm.wasm?v=20261027092030').then((r) => { if (!r.ok) throw new Error('bkasm.wasm: ' + r.status); return r.arrayBuffer(); }).then((b) => WebAssembly.compile(b));
     let mod; try { mod = await asmMod; } catch (e) { asmMod = null; throw e; }
     const W = window.UnrealWasi, fs = new W.MemFS(), out = [];
     const nm = name.replace(/[^\w.-]/g, '_');
@@ -470,7 +470,7 @@
       const r = current(); if (mode === 'text') bytes = r.b;
       const body = document.createElement('div'); body.className = 'fesa';
       const tg = doc.targets();
-      body.innerHTML = '<label>Name <input class="nm" spellcheck="false" autocomplete="off"></label><label>To <select class="tg" data-native></select></label>';
+      body.innerHTML = '<label>Name <input class="nm" spellcheck="false" autocomplete="off"></label><label>To <select class="tg" data-pop-class="compact"></select></label>';
       const nm = body.querySelector('.nm'), sel = body.querySelector('.tg');
       tg.forEach(([i, t]) => { const o = document.createElement('option'); o.value = i; o.textContent = t; sel.appendChild(o); });
       const here = doc.here(); sel.value = String(why && tg.length > 1 ? (tg.find(([i]) => i !== here) || tg[0])[0] : here);
@@ -705,16 +705,24 @@
     const dlg = $('fcdlg'); document.body.appendChild(dlg);
     function placeDlg() {
       if (dlg.hidden) return;
-      const box = dlg.querySelector('.box'), sw = $('screenwin'), vw = document.documentElement.clientWidth, vh = window.innerHeight;
-      const r = sw ? sw.getBoundingClientRect() : { left: 0, top: 0, width: vw, height: vh };
+      // centred on the window the question came from (File Commander, Options, the BK screen …)
+      const box = dlg.querySelector('.box'), vw = document.documentElement.clientWidth, vh = window.innerHeight;
+      const w = dlgFrom && dlgFrom.getClientRects().length ? dlgFrom : $('screenwin');
+      const r = w ? w.getBoundingClientRect() : { left: 0, top: 0, width: vw, height: vh };
       const bw = box.offsetWidth, bh = box.offsetHeight;
       box.style.left = Math.max(8, Math.min(r.left + (r.width - bw) / 2, vw - bw - 8)) + 'px';
       box.style.top = Math.max(8, Math.min(r.top + (r.height - bh) / 2, vh - bh - 8)) + 'px';
     }
     window.addEventListener('resize', placeDlg);
     // o.buttons: several answers (the index is returned, -1 = Esc); else OK / Cancel (true / false)
+    // the window a question belongs to: o.from, else the window that has the focus now
+    const WIN_SEL = '#fcwin, #options, #screenwin, .dwin, [role="dialog"]';
+    let dlgFrom = null, dlgBack = null;
     function ask(o) {
-      const d = $('fcdlg');
+      const d = $('fcdlg'), ae = document.activeElement;
+      dlgBack = ae && ae !== document.body ? ae : null;
+      dlgFrom = o.from || (ae && ae.closest && ae.closest(WIN_SEL)) || (!win.hidden ? win : null);
+      if (dlgFrom === d) dlgFrom = null;
       d.querySelector('.t').textContent = o.title; d.querySelector('.x').textContent = o.text;
       const labels = o.buttons || [o.ok || 'OK', o.no || 'Cancel'];
       const bar = d.querySelector('.b'); bar.innerHTML = '';
@@ -728,7 +736,8 @@
       let inp = null; // a name to type (New folder, Save as): Enter takes it
       if (o.input !== undefined) { inp = document.createElement('input'); inp.className = 'dlgin'; inp.value = o.input; inp.spellcheck = false; inp.autocomplete = 'off'; d.querySelector('.x').appendChild(inp); }
       d.hidden = false; placeDlg(); if (inp) { inp.focus(); inp.select(); } else bar.querySelector('button').focus();
-      return new Promise((res) => { dlgDone = (v) => { d.hidden = true; dlgDone = null; P[act].el.querySelector('.fclist').focus();
+      return new Promise((res) => { dlgDone = (v) => { d.hidden = true; dlgDone = null;
+        if (dlgBack && dlgBack.isConnected && dlgBack.getClientRects().length && !win.contains(dlgBack)) dlgBack.focus({ preventScroll: true }); else if (!win.hidden) P[act].el.querySelector('.fclist').focus();
         res(inp ? (v === true ? inp.value.trim() : null) : o.buttons ? (v === true ? 0 : v === false ? -1 : v) : v); }; });
     }
     const askName = (title, text, value) => ask({ title, text, input: value, ok: 'OK' });
@@ -951,20 +960,9 @@
     $('fcfile').onchange = (e) => { if (e.target.files.length) upload(e.target.files, upAsSet); e.target.value = ''; };
     // the menus under the buttons (Files): a small list of commands
     let mpop = null;
-    function menuClose() { if (!mpop) return; mpop.btn.classList.remove('open'); mpop.remove(); mpop = null; }
-    function menuBtn(btn, items) {
-      btn.onclick = (e) => {
-        e.stopPropagation();
-        if (mpop && mpop.btn === btn) { menuClose(); return; }
-        menuClose();
-        const m = document.createElement('div'); m.className = 'fcmenupop'; m.btn = btn;
-        for (const [t, hint, fn] of items) { const b = document.createElement('button'); b.innerHTML = '<span></span><i></i>'; b.children[0].textContent = t; b.children[1].textContent = hint; b.onclick = (ev) => { ev.stopPropagation(); menuClose(); fn(); }; m.appendChild(b); }
-        win.appendChild(m); btn.classList.add('open'); mpop = m;
-        const r = btn.getBoundingClientRect(), wr = win.getBoundingClientRect();
-        m.style.left = Math.max(4, Math.min(r.right - wr.left - m.offsetWidth, wr.width - m.offsetWidth - 4)) + 'px'; m.style.top = (r.top - wr.top - m.offsetHeight - 2) + 'px';
-      };
-    }
-    document.addEventListener('pointerdown', (e) => { if (mpop && !mpop.contains(e.target) && e.target !== mpop.btn) menuClose(); }, true);
+    // Files ▾: a menu from the button, drawn as a compact list (menu.js of the dropdown kit)
+    const menuClose = () => { if (window.UnrealMenu) window.UnrealMenu.close(); };
+    const menuBtn = (btn, items) => window.UnrealMenu.attach(btn, items, { within: win });
     menuBtn($('fcfiles'), [['Download Files', 'to PC: one as is, more or folders as zip', () => download()],
       ['Upload Files', 'from PC: zip unpacked with folders', () => { upAsSet = false; $('fcfile').click(); }],
       ['Open zip as set', 'from PC: zip in panel list', () => { upAsSet = true; $('fcfile').click(); }]]);
@@ -1004,7 +1002,7 @@
     return {
       show, get open() { return !win.hidden; }, hasFocus: () => win.contains(document.activeElement) || viewer.hasFocus() || editor.hasFocus(),
       current, ask, dialogOpen: () => !!dlgDone, addSet: (set, other) => addSet(set, other ? 1 - act : act), refresh: () => { if (!win.hidden) { fillSrc(); load(0); load(1); } },
-      select, menuOpen: () => !!mpop, closeMenu: () => menuClose(),
+      select, menuOpen: () => !!(window.UnrealMenu && window.UnrealMenu.isOpen()), closeMenu: () => menuClose(),
     };
   }
   window.BKFC = { create, binInfo, bkName, splitName, setVolume, asm, _test: { PDP, asm } };

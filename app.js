@@ -3,11 +3,11 @@
   'use strict';
   const { MemFS, WASI } = window.UnrealWasi; // wasi_fs.js (shared with the Unreal Speccy web port)
 
-  const WASM_URL = 'bk.wasm?v=20261023181402';
-  const APP_VER = '0.30.5'; // About (history: changes.txt)
+  const WASM_URL = 'bk.wasm?v=20261027092030';
+  const APP_VER = '0.31.0'; // About (history: changes.txt)
   // the author's e-mail in About, as a picture (not text for address collectors): 12px, the About line's colour, 3x
   const IMG_MAIL = 'data:image/png;base64,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';
-  const BUILD = '20261023181402'; // set by make_dist.sh: the build of these files (index.html carries the same in <meta name="build">)
+  const BUILD = '20261027092030'; // set by make_dist.sh: the build of these files (index.html carries the same in <meta name="build">)
   // bk.ini of the original emulator is used as is (ROM names, options); it sits next to index.html.
   const INI_FILE = 'bk.ini';
   // Folders on the server are lower case: ROM images live in rom/ (names as in bk.ini, lower case).
@@ -2006,6 +2006,40 @@
     if (!v) raHelp(false);
     if (v) { raFill(); raFW.place(); } else canvas.focus();
   }
+  // changes.txt in a window of its own: lines wrapped by words, opened at its end (the newest version)
+  let chgFW = null;
+  async function showChanges(v) {
+    const w = $('chgwin');
+    if (!chgFW) chgFW = floatWin(w, 'chgpos', () => {
+      const r = $('screenwrap').getBoundingClientRect(), vw = document.documentElement.clientWidth;
+      return { x: Math.max(4, Math.min(r.left + (r.width - w.offsetWidth) / 2, vw - w.offsetWidth - 4)), y: Math.max(8, r.top + 20) };
+    });
+    if (!v) { w.hidden = true; return; }
+    w.hidden = false; chgFW.place(); activateWin(w);
+    const b = $('chgbody');
+    try { chgRender(b, new TextDecoder().decode(await fetchBytes('changes.txt'))); }
+    catch (e) { b.textContent = 'changes.txt: ' + e.message; }
+    b.scrollTop = b.scrollHeight; w.focus({ preventScroll: true });
+  }
+  // the file's own line breaks (about 88 columns) are joined: an item is one paragraph, wrapped by words at the window's
+  // width with a hanging indent; version lines stay as they are
+  function chgRender(b, txt) {
+    b.textContent = '';
+    let cur = null;
+    for (const line of txt.replace(/\r\n?/g, '\n').split('\n')) {
+      if (/^\s{2}\S/.test(line) && cur && !/^\s{4,}version/.test(line)) { cur.textContent += ' ' + line.trim(); continue; } // continuation
+      const d = document.createElement('div');
+      if (!line.trim()) d.className = 'gap';
+      else if (/^\s*version\s/.test(line)) { d.className = 'ver'; d.textContent = line.trim().replace(/\s{2,}/g, '   '); }
+      else { d.className = 'it'; d.textContent = line.trim(); }
+      b.appendChild(d); cur = d.className === 'it' ? d : null;
+    }
+  }
+  function bindChanges() {
+    $('chglink').onclick = (e) => { e.preventDefault(); showChanges(true); };
+    $('chgclose').onclick = () => showChanges(false);
+    $('chgwin').addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Escape') { e.preventDefault(); showChanges(false); } });
+  }
   function bindRest() {
     raFW = floatWin($('restwin'), 'restpos', () => {
       const r = $('screenwrap').getBoundingClientRect(), w = $('restwin').offsetWidth, vw = document.documentElement.clientWidth;
@@ -2039,6 +2073,7 @@
       const im = new Image(); im.src = IMG_MAIL; im.alt = 'e-mail'; im.className = 'mailimg'; v.append(im, ')');
       v.title = BUILD !== 'dev' ? 'build ' + BUILD : 'dev build';
     }
+    if (id === 'off') offUI();
     if (optOpen()) optFW.place();
     optBtns();
   }
@@ -2127,6 +2162,8 @@
     bindSysInfo();
     bindPerf();
     bindRest();
+    bindChanges();
+    bindOffline();
     bindText();
     bindMouse();
     bindWindows();
@@ -2150,6 +2187,76 @@
     return d.scrollHeight > window.innerHeight + 1 || d.scrollWidth > window.innerWidth + 1;
   }
   document.addEventListener('touchmove', (e) => { if (e.touches.length === 1 && e.cancelable && !scrollsUnder(e.target)) e.preventDefault(); }, { passive: false });
+
+  // ------------------------------------------------------------------ Offline (service worker sw.js, from Web Unreal Speccy):
+  // the page, scripts, wasm and the site's files (rom/, img/, lists) kept in the browser
+  const SW_OK = 'serviceWorker' in navigator && BUILD !== 'dev' && (location.protocol === 'https:' || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname));
+  let swErr = '';
+  async function swStart() {
+    if (!SW_OK) return;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (optOpen() && optPane === 'off') offUI(); }); // took over this page: the tab shows it
+    try { await navigator.serviceWorker.register('sw.js?v=' + BUILD); swErr = ''; } catch (e) { swErr = /404|fetch|bad http|not found/i.test(e.message) ? 'sw.js not found on the server' : 'sw.js: ' + e.message; log('offline: ' + e.message); }
+    if (optOpen() && optPane === 'off') offUI();
+  }
+  function swAsk(msg) { // → answer of the active service worker (null: none)
+    return new Promise((res) => {
+      const c = navigator.serviceWorker && navigator.serviceWorker.controller; if (!c) { res(null); return; }
+      const ch = new MessageChannel(); ch.port1.onmessage = (e) => res(e.data); c.postMessage(msg, [ch.port2]); setTimeout(() => res(null), 3000);
+    });
+  }
+  const offMsg = (t, err) => { $('offstat').textContent = t; $('offstat').hidden = !t; $('offstat').classList.toggle('err', !!err); };
+  async function offUI() {
+    if (!SW_OK) { offMsg(BUILD === 'dev' ? 'dev build: no offline copy' : 'needs https', true); $('ofmake').disabled = $('ofclear').disabled = true; return; }
+    const a = await swAsk({ cmd: 'list' });
+    if (!a) { offMsg(swErr || 'offline copy starts…', !!swErr); return; } // not running yet: nothing to show
+    const files = a.urls.filter((u) => /\/(rom|img)\//i.test(u)).length;
+    let est = ''; try { const e = await navigator.storage.estimate(); if (e && e.usage) est = ', ' + (e.usage / 1048576).toFixed(1) + ' MB used'; } catch (e) {}
+    offMsg('build ' + a.build + '\n' + files + ' files of the site' + est);
+  }
+  async function makeOffline() {
+    if (!navigator.serviceWorker || !navigator.serviceWorker.controller) { await offUI(); return; }
+    $('ofmake').disabled = true;
+    try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) {}
+    const jobs = [], seen = new Set(), add = (label, fn, key) => { if (seen.has(key)) return; seen.add(key); jobs.push([label, fn]); };
+    for (const m of Object.values(MODELS)) for (const f of m.files || []) add(f, () => fetchRom(f), 'r:' + f.toLowerCase());
+    add('img/list.json', () => fetchBytes('img/list.json'), 'list');
+    if ($('of_sets').checked) for (const g of listGroups()) for (const it of serverList[g[0]] || []) if (it.url && !it.run) add(it.url.replace(/^.*\//, ''), () => fetchBytes(it.url), it.url);
+    let ok = 0, bad = 0;
+    for (const [i, [label, fn]] of jobs.entries()) {
+      offMsg(`Downloading ${i + 1} / ${jobs.length}: ${label}`);
+      try { await fn(); ok++; } catch (e) { bad++; }
+    }
+    $('ofmake').disabled = false;
+    await offUI();
+    toast('Offline copy: ' + ok + ' files' + (bad ? ', ' + bad + ' not downloaded' : ''), !!bad);
+  }
+  function bindOffline() {
+    $('ofmake').onclick = makeOffline;
+    $('ofclear').onclick = async () => {
+      if (!await fc.ask({ title: 'Offline', text: 'Drop the downloaded files of the offline copy?\nThe emulator itself stays.', ok: 'Drop', no: 'Cancel', from: $('options') })) return;
+      await swAsk({ cmd: 'clear' }); offUI();
+    };
+    // the site answering? HEAD of the page (the service worker handles GET only), 5 s at most; at start, and with the option
+    // every 20 s, on a network change and on return to the tab. "offline" in the BK window title, on by default
+    const poll = () => load('offpoll') === '1';
+    $('of_label').checked = load('offlabel') !== '0';
+    $('of_label').onchange = () => { store('offlabel', $('of_label').checked ? '1' : '0'); netLabel(); };
+    $('of_poll').checked = poll();
+    $('of_poll').onchange = () => { store('offpoll', $('of_poll').checked ? '1' : '0'); if (poll()) netProbe(); };
+    window.addEventListener('online', () => { if (poll()) netProbe(); }); window.addEventListener('offline', () => { if (poll()) { netOff = true; netLabel(); } });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && poll()) netProbe(); });
+    setInterval(() => { if (!document.hidden && poll()) netProbe(); }, 20000);
+  }
+  let netOff = false;
+  async function netProbe() {
+    if (!/^https?:$/.test(location.protocol)) return;
+    const ac = window.AbortController ? new AbortController() : null, t = ac && setTimeout(() => ac.abort(), 5000);
+    let ok = false;
+    try { const r = await fetch(location.pathname + '?ping=' + Date.now(), { method: 'HEAD', cache: 'no-store', signal: ac && ac.signal }); ok = r.status > 0; } catch (e) { ok = false; }
+    clearTimeout(t);
+    netOff = !ok || navigator.onLine === false; netLabel();
+  }
+  function netLabel() { $('netst').hidden = !(netOff && load('offlabel') !== '0'); }
 
   // a home-screen app (iOS) keeps its index.html for a long time: look for a newer build on the server; the 'reload' fetch
   // also refreshes the browser's cached copy, so one reload is enough
@@ -2186,6 +2293,8 @@
       requestAnimationFrame(tick);
       linkApply(); // REST API: clock, sound, keyboard, files, start
       checkUpdate();
+      netProbe(); // started from the site or from the offline copy?
+      swStart(); // offline copy (sw.js)
     } catch (err) {
       let msg = 'Startup error: ' + err.message;
       if (location.protocol === 'file:') msg += '<br>Open the page through a web server.';
