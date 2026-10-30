@@ -6,8 +6,7 @@ const BUILD = new URL(self.location.href).searchParams.get('v') || 'dev';
 const NET_WAIT = 4000; // ms the site has to answer before the kept copy is used
 const SCOPE = new URL(self.registration.scope).pathname; // copies in other folders of the site keep their own caches
 const CORE = 'bk-core:' + SCOPE + ':' + BUILD, FILES = 'bk-files:' + SCOPE;
-const SHELL = ['./', 'index.html', 'changes.txt', 'icon.png', 'apple-touch-icon.png', 'bk.ini',
-  'usel.js', 'menu.js', 'wasi_fs.js', 'unzip.js', 'fcmd.js', 'diskfs.js', 'dbg.js', 'vkbd.js', 'app.js', 'bk.wasm', 'bkasm.wasm'];
+const SHELL = ['./', 'index.html', 'changes.txt', 'icon.png', 'apple-touch-icon.png', 'bk.ini', 'js/js.zip', 'bk.zip', 'bkasm.zip'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {

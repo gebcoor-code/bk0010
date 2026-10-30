@@ -334,3 +334,18 @@
   Search) compact; Files menu of File Commander drawn as compact list; lists of a small
   window may go past it (from Web Unreal Speccy)
 * questions centred on window they come from (File Commander, Options, BK screen)
+
+        version 0.32.0                  30 oct 2026
+
++ phone in landscape (from Web Unreal Speccy): screen fits whole height, on-screen BK and
+  XT keyboards split — left half at left edge, right half at right edge (space bar on both
+  sides), joystick stick and fire at page edges; page does not scroll (iPhone home screen)
++ System Info: Viewport row (visible area, home screen, landscape layout)
+@ scripts of the page come in one archive js/js.zip, wasm modules in bk.zip and bkasm.zip
+@ Options → Offline: status "N files, X MB used"
+
+        version 0.32.1                  30 oct 2026
+
+* phone in landscape: smaller labels on XT keys Ins … Pause; fire centred in strip beside
+  screen; only AF (autofire) button over page, above fire
+* phone in portrait: JOY panel without "cursor keys · fire: space" line, its buttons in one row

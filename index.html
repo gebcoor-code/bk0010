@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="build" content="20261027092030">
+<meta name="build" content="20261030172842">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link id="favicon" rel="icon" href="icon.png">
@@ -433,7 +433,34 @@ button.vk-tog.on { background: rgba(240,160,80,.14); color: var(--accent); borde
 .vk-ovl { position: absolute; inset: 0; pointer-events: none; z-index: 5; display: flex; align-items: flex-end; justify-content: space-between;
   padding: 0 3% 34px; line-height: normal; --js: 1; }
 .vk-ovl[hidden] { display: none; }
+/* a phone in landscape (from Web Unreal Speccy): the page does not scroll; the on-screen keyboard is split: its halves at the
+   left and right edges beside the screen (frames as wide as the whole keyboard, --kbw; taps between keys go on) */
+html.land, body.land { height: 100%; overflow: hidden; }
+body.land { position: fixed; inset: 0; } /* the document can not scroll at all: iOS (home screen) drew fixed things lower than it hit-tested them */
+body.land #toolbar { flex-wrap: nowrap; gap: 3px; } body.land #toolbar .bar.right { flex-wrap: nowrap; gap: 3px; }
+body.land #toolbar button.ico { flex: 1 1 0; width: auto; min-width: 18px; max-width: 34px; height: 28px; } /* the menu bar fits the width of the screen */
+body.land #stage { position: fixed; left: 0; right: 0; padding: 0; margin: 0 auto !important; gap: 6px; } /* top: applyScale; no transform: the JOY layer inside is fixed to the page */
+body.land #screenwin #vkbd { position: fixed; inset: 0; width: auto; min-width: 0; margin: 0; padding: 0; z-index: 20; pointer-events: none; background: none; border: 0; }
+.vk-splitw { position: absolute; inset: 0; pointer-events: none; }
+.vk-half { position: absolute; bottom: var(--lbot, 6px); width: var(--kbw, 400px); background: transparent !important; pointer-events: none; }
+.vk-half.l { left: 4px; } .vk-half.r { right: 4px; }
+.vk-half .vk-key, .vk-half .bk-k { pointer-events: auto; }
+.vk-half .bk-field { background: none; box-shadow: none; } /* the BK case is not drawn: only the keys beside the screen */
+.vk-half .vk-key { height: calc(var(--kbw, 400px) * .062); font-size: calc(var(--kbw, 400px) * .03); }
+.vk-half.vk-xt { gap: 3px; }
+.vk-half .vk-key.tiny { font-size: calc(var(--kbw, 400px) * .019); overflow: hidden; white-space: nowrap; padding: 0; letter-spacing: -.02em; } /* PgUp … Pause */
+.vk-half .vk-key[data-code="ShiftRight"] { font-size: calc(var(--kbw, 400px) * .024); overflow: hidden; white-space: nowrap; padding: 0; }
+body.land #screenwrap .corner { z-index: 25; }
+/* JOY: the stick and fire at the edges of the page, as wide as the room beside the screen */
+body.land .vk-ovl { position: fixed; inset: 0; --js: var(--ljs, 1) !important; padding: 0 6px var(--lbot, 6px); z-index: 20; }
 .vk-ovl.swap { flex-direction: row-reverse; }
+/* landscape: the stick and fire each centred in the strip beside the screen; AF above fire */
+body.land .vk-ovl { --pw: calc(clamp(120px, 34vw, 200px) * var(--js)); --fw: calc(clamp(80px, 24vw, 120px) * var(--js)); }
+body.land .vk-ovl .vk-pad { margin-left: max(0px, calc((var(--side, 60px) + 10px - var(--pw)) / 2 - 6px)); margin-right: max(0px, calc((var(--side, 60px) + 10px - var(--pw)) / 2 - 6px)); }
+body.land .vk-ovl .vk-fire { margin-left: max(0px, calc((var(--side, 60px) + 10px - var(--fw)) / 2 - 6px)); margin-right: max(0px, calc((var(--side, 60px) + 10px - var(--fw)) / 2 - 6px)); }
+body.land .vk-ovbar { left: auto; right: calc((var(--side, 60px) + 10px) / 2); transform: translateX(50%); bottom: calc(var(--lbot, 6px) + (var(--pw) + var(--fw)) / 2 + 14px); }
+body.land .vk-ovl.swap .vk-ovbar { right: auto; left: calc((var(--side, 60px) + 10px) / 2); transform: translateX(-50%); }
+body.land .vk-ovbar .vk-tog .l { display: none; } body.land .vk-ovbar .vk-tog .s { display: inline; }
 .vk-ovl .vk-pad, .vk-ovl .vk-fire { pointer-events: auto; opacity: var(--jo, .45); will-change: transform; }
 .vk-ovl .vk-fire { margin-bottom: calc((clamp(120px, 34vw, 200px) - clamp(80px, 24vw, 120px)) * var(--js) / 2); }
 .vk-ovl .vk-pad .ring { fill: rgba(30,33,40,.5); }
@@ -444,8 +471,9 @@ button.vk-tog.on { background: rgba(240,160,80,.14); color: var(--accent); borde
 @media (max-width: 520px) {
   .vk-joy:not(.ov) { flex-wrap: wrap; align-items: center; }
   .vk-joy:not(.ov) .vk-joymid { order: 5; width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
-  .vk-joy:not(.ov) .vk-togs { grid-template-columns: repeat(6, auto); gap: 3px; }
-  .vk-tog { min-width: 0; height: 22px; font-size: 9.5px; padding: 0 5px; letter-spacing: 0; }
+  .vk-joy:not(.ov) .vk-togs { grid-template-columns: repeat(7, auto); gap: 3px; }
+  .vk-joyname { display: none; }
+  .vk-tog { min-width: 0; height: 22px; font-size: 9.5px; padding: 0 4px; letter-spacing: 0; }
   .vk-joymid { gap: 4px; }
 }
 /* drop-down lists (usel.js): the page's own box and list instead of the browser's select; "select" rules apply to .usel too */
@@ -822,7 +850,6 @@ select.usel-src { display: none !important; }
         <label class="chk" title="The site is checked at start (and later too, with the option below): when it does not answer, a red &quot;offline&quot; is shown in the BK window title, left of the clock"><input type="checkbox" id="of_label" checked> Show 'offline'</label>
         <label class="chk" title="Off: the site is checked once, at start"><input type="checkbox" id="of_poll"> Check connection every 20 sec</label>
         <div class="offbtns"><button id="ofmake" title="Download what is checked into the offline copy of this site: the emulator then starts without internet (also from the iOS home screen)">Make offline</button><button id="ofclear" title="Drop the downloaded files of the offline copy (the emulator itself stays)">Clear files</button></div>
-        <p class="note">The page, scripts and wasm are kept by the browser after the first visit; Make offline downloads the rest beforehand. Needs https (or localhost).</p>
       </div>
     </div>
     <div class="pane gone" data-pane="about">
@@ -1206,14 +1233,42 @@ select.usel-src { display: none !important; }
   <pre id="fvbody" tabindex="0"></pre>
 </div>
 
-<script src="usel.js?v=20261027092030"></script>
-<script src="menu.js?v=20261027092030"></script>
-<script src="wasi_fs.js?v=20261027092030"></script>
-<script src="unzip.js?v=20261027092030"></script>
-<script src="fcmd.js?v=20261027092030"></script>
-<script src="diskfs.js?v=20261027092030"></script>
-<script src="dbg.js?v=20261027092030"></script>
-<script src="vkbd.js?v=20261027092030"></script>
-<script src="app.js?v=20261027092030"></script>
+<script>
+// the page's scripts come in one archive, js/js.zip (fewer requests, packed): unpacked here (DecompressionStream) and run in
+// this order as one script. make_dist.sh puts the build into the address (?v=)
+(function () {
+  'use strict';
+  var JS_ZIP = 'js/js.zip?v=20261030172842';
+  var ORDER = ['usel.js', 'menu.js', 'wasi_fs.js', 'unzip.js', 'fcmd.js', 'diskfs.js', 'dbg.js', 'vkbd.js', 'app.js'];
+  var u16 = function (b, o) { return b[o] | (b[o + 1] << 8); }, u32 = function (b, o) { return (b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24)) >>> 0; };
+  function fail(e) { var l = document.getElementById('loading'); if (l) l.textContent = 'Startup error: ' + (e && e.message || e); console.error(e); }
+  async function unpack(b, off, csize, method) {
+    var n = u16(b, off + 26), x = u16(b, off + 28), d = b.subarray(off + 30 + n + x, off + 30 + n + x + csize);
+    if (method === 0) return d;
+    if (typeof DecompressionStream === 'undefined') throw new Error('this browser cannot unpack ZIP (DecompressionStream)');
+    return new Uint8Array(await new Response(new Blob([d]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+  }
+  (async function () {
+    var r = await fetch(JS_ZIP, { cache: 'no-cache' });
+    if (!r.ok) throw new Error(JS_ZIP + ': HTTP ' + r.status);
+    var b = new Uint8Array(await r.arrayBuffer()), e = -1, files = {};
+    for (var i = b.length - 22; i >= 0; i--) if (u32(b, i) === 0x06054B50) { e = i; break; }
+    if (e < 0) throw new Error(JS_ZIP + ': not a ZIP');
+    for (var k = 0, p = u32(b, e + 16), cnt = u16(b, e + 10); k < cnt; k++) {
+      var nl = u16(b, p + 28), name = new TextDecoder().decode(b.subarray(p + 46, p + 46 + nl)).replace(/^.*\//, '');
+      files[name] = [u32(b, p + 42), u32(b, p + 20), u16(b, p + 10)];
+      p += 46 + nl + u16(b, p + 30) + u16(b, p + 32);
+    }
+    var parts = [];
+    for (var j = 0; j < ORDER.length; j++) {
+      var f = files[ORDER[j]]; if (!f) throw new Error(JS_ZIP + ': no ' + ORDER[j]);
+      parts.push(new TextDecoder().decode(await unpack(b, f[0], f[1], f[2])), '\n;\n');
+    }
+    var s = document.createElement('script'); s.src = URL.createObjectURL(new Blob(parts, { type: 'text/javascript' }));
+    s.onerror = function () { fail(JS_ZIP + ': scripts did not run'); };
+    document.body.appendChild(s);
+  })().catch(fail);
+})();
+</script>
 </body>
 </html>
